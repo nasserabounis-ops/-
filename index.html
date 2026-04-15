@@ -37,6 +37,14 @@
             transform: translateY(-5px);
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border-color: #cbd5e1;
+        }
         .hide-scroll::-webkit-scrollbar { display: none; }
         .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
         
@@ -117,12 +125,12 @@
 </div>
 
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" id="main-app-content">
-    <header class="mb-8 text-center md:text-right flex flex-col md:flex-row justify-between items-center bg-white p-6 rounded-2xl shadow-sm border border-slate-200 border-r-8 border-r-emerald-500">
+    <header class="mb-8 text-center md:text-right flex flex-col md:flex-row justify-between items-center bg-white p-6 rounded-2xl shadow-md border border-slate-200 border-r-8 border-r-emerald-600">
         <div>
-            <h1 class="text-3xl md:text-4xl font-extrabold text-slate-800 mb-2">ريادة الأعمال: دورة حياة الشركات الناشئة</h1>
-            <p class="text-slate-500 text-lg">من الفكرة إلى النضوج المؤسسي: تحليل شامل للهيكل، التمويل، والمخاطر.</p>
+            <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-2">ريادة الأعمال: دورة حياة الشركات الناشئة</h1>
+            <p class="text-slate-600 text-lg font-medium">من الفكرة إلى النضوج المؤسسي: تحليل شامل للهيكل، التمويل، والمخاطر.</p>
         </div>
-        <button onclick="toggleFullScreen()" class="mt-6 md:mt-0 bg-slate-50 hover:bg-slate-100 text-slate-700 px-6 py-4 rounded-xl font-bold text-lg shadow-inner border border-slate-200 flex items-center gap-3 transition-colors focus:outline-none">
+        <button onclick="toggleFullScreen()" class="mt-6 md:mt-0 bg-slate-50 hover:bg-slate-100 text-slate-800 px-6 py-4 rounded-xl font-bold text-lg shadow-sm hover:shadow-md border border-slate-300 flex items-center gap-3 transition-all focus:outline-none">
             <span id="fs-icon">⛶</span> <span id="fs-text">ملء الشاشة</span>
         </button>
     </header>
@@ -155,14 +163,14 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                    <h3 class="text-xl font-bold text-center text-slate-700 mb-4">معدل الفشل في المراحل المختلفة</h3>
+                <div class="bg-white p-6 rounded-2xl shadow-md border border-slate-200 card-hover">
+                    <h3 class="text-xl font-bold text-center text-slate-900 mb-4">معدل الفشل في المراحل المختلفة</h3>
                     <div class="chart-container">
                         <canvas id="failureRateChart"></canvas>
                     </div>
                 </div>
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                    <h3 class="text-xl font-bold text-center text-slate-700 mb-4">تأثير الشركات الناشئة على الوظائف (مقارنة)</h3>
+                <div class="bg-white p-6 rounded-2xl shadow-md border border-slate-200 card-hover">
+                    <h3 class="text-xl font-bold text-center text-slate-900 mb-4">تأثير الشركات الناشئة على الوظائف (مقارنة)</h3>
                     <div class="chart-container">
                         <canvas id="jobsImpactChart"></canvas>
                     </div>
@@ -203,6 +211,28 @@
                 <div id="stage-details-box" class="bg-slate-50 border border-slate-200 rounded-2xl p-6 md:p-8 transition-opacity duration-300 min-h-[220px]">
                     <!-- Injected via JS -->
                 </div>
+
+                <!-- Presenter Helper: Stages -->
+                <div class="mt-8 bg-slate-50 border border-slate-200 rounded-xl p-6 shadow-sm relative overflow-hidden card-hover">
+                    <div class="absolute top-0 right-0 w-2 h-full bg-amber-500"></div>
+                    <div class="flex flex-col md:flex-row items-start gap-4">
+                        <div class="text-4xl bg-white p-3 rounded-full shadow-sm border border-slate-100">🎙️</div>
+                        <div class="w-full">
+                            <h4 class="font-bold text-slate-800 text-lg mb-2">إضاءة للنقاش مع الجمهور</h4>
+                            <p class="text-amber-700 font-bold text-xl mb-4 italic">"هل تعتقدون أن الانتقال 'السريع جداً' بين هذه المراحل هو علامة نجاح أم إشارة خطر للشركة الناشئة؟ ولماذا؟"</p>
+                            
+                            <!-- Collapsible Helper -->
+                            <button onclick="document.getElementById('helper-stages').classList.toggle('hidden')" class="w-full text-right flex justify-between items-center bg-amber-100 hover:bg-amber-200 text-amber-800 p-3 rounded-lg transition-colors border border-amber-200 focus:outline-none">
+                                <span class="text-xs font-bold uppercase tracking-wider">💡 إظهار مساعد المحاضر (مخفي)</span>
+                                <span class="text-sm">👁️</span>
+                            </button>
+                            <div id="helper-stages" class="hidden mt-2 bg-white p-4 rounded-lg border border-slate-100 shadow-inner transition-all">
+                                <p class="text-slate-600 text-sm leading-relaxed">استمع لإجاباتهم، ثم ركز هنا على مصطلح <strong class="text-slate-800">"التوسع المبكر" (Premature Scaling)</strong>. وضّح أن 70% من الشركات تفشل لأنها تحاول التصرف كشركات كبرى (إنفاق ضخم، تعيين مكثف) قبل أن تثبت حقاً أن منتجها مطلوب في السوق. النمو الصحي أفضل من النمو السريع المتهور.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </section>
 
@@ -237,6 +267,28 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Presenter Helper: Funding -->
+                <div class="mt-8 bg-slate-50 border border-slate-200 rounded-xl p-6 shadow-sm relative overflow-hidden card-hover">
+                    <div class="absolute top-0 right-0 w-2 h-full bg-blue-500"></div>
+                    <div class="flex flex-col md:flex-row items-start gap-4">
+                        <div class="text-4xl bg-white p-3 rounded-full shadow-sm border border-slate-100">⚖️</div>
+                        <div class="w-full">
+                            <h4 class="font-bold text-slate-800 text-lg mb-2">إضاءة للنقاش مع الجمهور</h4>
+                            <p class="text-blue-700 font-bold text-xl mb-4 italic">"إذا عُرض عليك تمويل بمليون دولار في مرحلة التأسيس مقابل التنازل عن 40% من شركتك، هل تقبل؟ وما هو الثمن الحقيقي لهذا القرار؟"</p>
+                            
+                            <!-- Collapsible Helper -->
+                            <button onclick="document.getElementById('helper-funding').classList.toggle('hidden')" class="w-full text-right flex justify-between items-center bg-blue-100 hover:bg-blue-200 text-blue-800 p-3 rounded-lg transition-colors border border-blue-200 focus:outline-none">
+                                <span class="text-xs font-bold uppercase tracking-wider">💡 إظهار مساعد المحاضر (مخفي)</span>
+                                <span class="text-sm">👁️</span>
+                            </button>
+                            <div id="helper-funding" class="hidden mt-2 bg-white p-4 rounded-lg border border-slate-100 shadow-inner transition-all">
+                                <p class="text-slate-600 text-sm leading-relaxed">استخدم الرسم البياني لتوضيح مفهوم <strong class="text-slate-800">تخفيف الملكية (Dilution)</strong>. أكّد للحضور أن جمع الأموال ليس هو الإنجاز، بل توظيفها هو الإنجاز. التنازل عن حصة كبيرة مبكراً يُفقد المؤسس الحافز ويصعب جولات التمويل اللاحقة. الكاش أداة للوصول للمرحلة التالية، وليس غاية بحد ذاته.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </section>
 
@@ -266,6 +318,28 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Presenter Helper: Innovation -->
+                <div class="mt-8 bg-slate-900 border border-slate-700 rounded-xl p-6 shadow-lg relative overflow-hidden card-hover">
+                    <div class="absolute top-0 right-0 w-2 h-full bg-emerald-400"></div>
+                    <div class="flex flex-col md:flex-row items-start gap-4">
+                        <div class="text-4xl bg-slate-800 p-3 rounded-full shadow-sm border border-slate-600">🎯</div>
+                        <div class="w-full">
+                            <h4 class="font-bold text-white text-lg mb-2">إضاءة للنقاش مع الجمهور</h4>
+                            <p class="text-emerald-400 font-bold text-xl mb-4 italic">"كيف يمكن للشركة أن تحافظ على 'روح الشركة الناشئة' (السرعة، الابتكار، والجرأة) عندما يصل عدد موظفيها إلى 500 موظف؟"</p>
+                            
+                            <!-- Collapsible Helper -->
+                            <button onclick="document.getElementById('helper-innovation').classList.toggle('hidden')" class="w-full text-right flex justify-between items-center bg-slate-800 hover:bg-slate-700 text-emerald-400 p-3 rounded-lg transition-colors border border-slate-600 focus:outline-none">
+                                <span class="text-xs font-bold uppercase tracking-wider">💡 إظهار مساعد المحاضر (مخفي)</span>
+                                <span class="text-sm">👁️</span>
+                            </button>
+                            <div id="helper-innovation" class="hidden mt-2 bg-slate-800 p-4 rounded-lg border border-slate-600 shadow-inner transition-all">
+                                <p class="text-slate-300 text-sm leading-relaxed">وجّه انتباههم إلى المخطط الراداري. وضح أن التحول من "صانع" إلى "قائد" يعني الانتقال من تنفيذ المهام باليد إلى <strong class="text-white">تفويض الصلاحيات (Delegation)</strong> وخلق بيئة آمنة للموظفين لتجربة أفكار جديدة والفشل بسرعة (Fail Fast) دون خوف من العقاب المؤسسي.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </section>
 
@@ -289,33 +363,56 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Presenter Helper: Risks -->
+                <div class="mt-8 bg-slate-50 border border-slate-200 rounded-xl p-6 shadow-sm relative overflow-hidden card-hover">
+                    <div class="absolute top-0 right-0 w-2 h-full bg-red-500"></div>
+                    <div class="flex flex-col md:flex-row items-start gap-4">
+                        <div class="text-4xl bg-white p-3 rounded-full shadow-sm border border-slate-100">♟️</div>
+                        <div class="w-full">
+                            <h4 class="font-bold text-slate-800 text-lg mb-2">إضاءة للنقاش مع الجمهور</h4>
+                            <p class="text-red-600 font-bold text-xl mb-4 italic">"بناءً على مصفوفة المخاطر أمامكم، متى يجب على المؤسس أن يمتلك شجاعة الاستسلام (إغلاق الشركة)، ومتى يجب أن يقاتل لتغيير المسار (Pivot)؟"</p>
+                            
+                            <!-- Collapsible Helper -->
+                            <button onclick="document.getElementById('helper-risks').classList.toggle('hidden')" class="w-full text-right flex justify-between items-center bg-red-100 hover:bg-red-200 text-red-800 p-3 rounded-lg transition-colors border border-red-200 focus:outline-none">
+                                <span class="text-xs font-bold uppercase tracking-wider">💡 إظهار مساعد المحاضر (مخفي)</span>
+                                <span class="text-sm">👁️</span>
+                            </button>
+                            <div id="helper-risks" class="hidden mt-2 bg-white p-4 rounded-lg border border-slate-100 shadow-inner transition-all">
+                                <p class="text-slate-600 text-sm leading-relaxed">هنا تبرز أهمية الإدارة الاستباقية. اشرح أن الخطر الحقيقي ليس في مواجهة العقبات، بل في التعلق العاطفي بالمنتج متجاهلاً بيانات السوق. <strong class="text-slate-800">التخارج المبكر أو التحول الجذري (Pivot)</strong> هو قرار استراتيجي شجاع يوقف النزيف المالي، وليس بالضرورة علامة فشل للمؤسس.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </section>
 
         <!-- Section: Live Poll -->
         <section id="poll" class="section-content hidden fade-in">
-            <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200 mb-8 border-t-4 border-t-blue-500 relative">
+            <div class="bg-white p-6 md:p-8 rounded-2xl shadow-lg border border-slate-200 mb-8 border-t-4 border-t-blue-600">
                 
-                <!-- Admin Reset -->
-                <button onclick="openPwdModal()" class="absolute top-6 left-6 bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition-colors focus:outline-none z-10">
-                    <span>🗑️</span> مسح البيانات
-                </button>
-
-                <div class="flex flex-col md:flex-row justify-between items-start mb-8 gap-6 mt-10 md:mt-0">
-                    <div class="md:w-2/3">
-                        <h2 class="text-2xl font-bold text-slate-800 flex items-center gap-2">
-                            <span class="text-blue-500">📡</span> نبض الجمهور: استطلاع سحابي مباشر
-                        </h2>
-                        <p class="text-slate-600 mt-2 text-lg">شارك برأيك. يتم جمع بيانات الحضور وعرضها لحظياً لمحاكاة تفاعل المنظومة الريادية.</p>
+                <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-8 gap-6">
+                    <div class="xl:w-3/5">
+                        <div class="flex flex-wrap items-center gap-4 mb-3">
+                            <h2 class="text-2xl font-bold text-slate-900 flex items-center gap-2">
+                                <span class="text-blue-600">📡</span> نبض الجمهور: استطلاع سحابي مباشر
+                            </h2>
+                            <!-- Admin Reset: Moved from absolute positioning to flex layout -->
+                            <button onclick="openPwdModal()" class="bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 px-3 py-1.5 rounded-lg text-sm font-bold flex items-center gap-2 transition-colors shadow-sm hover:shadow focus:outline-none">
+                                <span>🗑️</span> مسح البيانات (إدارة)
+                            </button>
+                        </div>
+                        <p class="text-slate-600 text-lg leading-relaxed font-medium">شارك برأيك الآن. يتم تجميع وتحليل إجابات الحضور وعرضها بشكل لحظي لمحاكاة التفاعل الحي والذكي في العروض التقديمية.</p>
                     </div>
                     
-                    <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl flex flex-col items-center gap-3 shadow-sm w-full md:w-auto shrink-0">
-                        <div id="qrcode" class="p-2 bg-white rounded border border-slate-200 shadow-sm min-w-[120px] min-h-[120px] flex items-center justify-center"></div>
-                        <div class="text-sm w-full">
-                            <strong class="text-slate-800 block mb-2 text-center font-bold">للمشاركة عبر هاتفك</strong>
+                    <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl flex flex-row items-center gap-4 shadow-sm w-full xl:w-auto card-hover shrink-0">
+                        <div id="qrcode" class="p-2 bg-white rounded-lg border border-slate-200 shadow-sm shrink-0 min-w-[100px] min-h-[100px] flex items-center justify-center"></div>
+                        <div class="text-sm w-full min-w-[200px]">
+                            <strong class="text-slate-900 block mb-2 font-bold text-base">مسح للمشاركة السريعة 📱</strong>
                             <div class="relative">
                                 <span class="absolute right-2 top-2 text-slate-400 text-xs">🔗</span>
-                                <input type="text" id="public-url-input" class="w-full text-xs py-2 pl-2 pr-6 border border-slate-300 rounded text-left focus:ring-2 focus:ring-blue-500 outline-none transition-all bg-white" dir="ltr" placeholder="رابط المشاركة..." oninput="debounceUpdateQR()">
+                                <input type="text" id="public-url-input" class="w-full text-xs py-2 pl-2 pr-6 border border-slate-300 rounded text-left focus:ring-2 focus:ring-blue-600 outline-none transition-all bg-white shadow-inner font-sans" dir="ltr" placeholder="رابط المشاركة..." oninput="debounceUpdateQR()">
                             </div>
                         </div>
                     </div>
@@ -323,7 +420,7 @@
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <!-- Voting Form -->
-                    <div class="bg-blue-50 p-6 rounded-xl border border-blue-100 lg:col-span-1 shadow-inner relative">
+                    <div class="bg-blue-50 p-6 rounded-xl border border-blue-200 lg:col-span-1 shadow-inner relative card-hover">
                         <h3 class="font-bold text-blue-900 mb-4 text-lg border-b border-blue-200 pb-2">صوّت الآن</h3>
                         <form id="audiencePollForm" class="space-y-4">
                             <div>
@@ -387,25 +484,25 @@
 
         <!-- Section: Conclusion -->
         <section id="conclusion" class="section-content hidden fade-in">
-            <div class="bg-white p-8 md:p-12 rounded-2xl shadow-sm border border-slate-200 mb-8 border-t-8 border-t-purple-600">
+            <div class="bg-white p-8 md:p-12 rounded-2xl shadow-lg border border-slate-200 mb-8 border-t-8 border-t-purple-700">
                 <div class="flex flex-col md:flex-row items-start gap-8">
-                    <div class="md:w-1/3 bg-purple-50 p-6 rounded-xl border border-purple-100 text-center shrink-0">
+                    <div class="md:w-1/3 bg-purple-50 p-6 rounded-xl border border-purple-200 text-center shrink-0 shadow-sm card-hover">
                         <div class="text-7xl mb-4">🧠❤️</div>
                         <h3 class="text-2xl font-black text-purple-900 mb-2">الذكاء العاطفي</h3>
-                        <p class="text-purple-700 font-medium mb-4">الأداة غير المرئية في ترسانة رائد الأعمال الناجح</p>
-                        <div class="text-sm text-slate-600 text-right space-y-3">
+                        <p class="text-purple-800 font-bold mb-4">الأداة غير المرئية في ترسانة رائد الأعمال الناجح</p>
+                        <div class="text-sm text-slate-700 text-right space-y-3 font-medium">
                             <p>✔️ امتصاص صدمات وادي الموت المالي.</p>
                             <p>✔️ إدارة الفوضى دون نقل التوتر للفريق.</p>
                             <p>✔️ تحويل الإخفاقات لدروس مستفادة.</p>
                         </div>
                     </div>
-                    <div class="md:w-2/3 space-y-5 text-lg leading-relaxed text-slate-700">
-                        <h2 class="text-3xl font-bold text-slate-800 mb-4">الخاتمة: ما وراء الأرقام الصماء</h2>
-                        <p>تُمثّل هذه الخاتمة جسراً يربط بين الأرقام الصماء في الميزانيات وبين النبض الحي في عروق القادة، حيث يتجلى الذكاء العاطفي كأهم الأدوات غير المرئية في ترسانة رائد الأعمال الناجح. إن القدرة على الموازنة بين <strong>"صرامة المحاسب"</strong> و<strong>"خيال المبتكر"</strong> ليست مجرد مهارة إدارية، بل هي نضج نفسي يسمح للقائد بامتصاص صدمات "وادي الموت" المالي دون أن يفقد إيمانه بالرؤية، وبإدارة الفوضى التشغيلية دون أن ينقل التوتر لفريقه.</p>
+                    <div class="md:w-2/3 space-y-5 text-lg leading-relaxed text-slate-800">
+                        <h2 class="text-3xl font-bold text-slate-900 mb-4">الخاتمة: ما وراء الأرقام الصماء</h2>
+                        <p>تُمثّل هذه الخاتمة جسراً يربط بين الأرقام الصماء في الميزانيات وبين النبض الحي في عروق القادة، حيث يتجلى الذكاء العاطفي كأهم الأدوات غير المرئية في ترسانة رائد الأعمال الناجح. إن القدرة على الموازنة بين <strong class="text-purple-700">"صرامة المحاسب"</strong> و<strong class="text-purple-700">"خيال المبتكر"</strong> ليست مجرد مهارة إدارية، بل هي نضج نفسي يسمح للقائد بامتصاص صدمات "وادي الموت" المالي دون أن يفقد إيمانه بالرؤية، وبإدارة الفوضى التشغيلية دون أن ينقل التوتر لفريقه.</p>
                         <p>إن الذكاء العاطفي هنا هو "الزيت" الذي يمنع تروس الشركة من التآكل تحت ضغط التحديات؛ فهو الذي يمنح المؤسس مرونة "المحورية" (Pivot) عندما يخبره المنطق الإحصائي بضرورة التغيير، وهو الذي يحول "فشل" جولة تمويلية إلى "درس" مستفاد بدلاً من كونه نهاية للطموح.</p>
                         
-                        <div class="bg-slate-900 text-white p-6 rounded-xl mt-6 shadow-lg border-r-4 border-purple-500 italic relative">
-                            <span class="absolute -top-4 -right-2 text-4xl opacity-50">❝</span>
+                        <div class="bg-slate-900 text-white p-6 rounded-xl mt-6 shadow-xl border-r-4 border-purple-500 italic relative card-hover">
+                            <span class="absolute -top-4 -right-2 text-4xl opacity-50 text-purple-300">❝</span>
                             في نهاية المطاف، الشركات الناشئة لا تقودها الخوارزميات، بل يقودها بشر يتأثرون ويؤثرون، ولذا فإن الاستثمار في "صلابة الروح" و"اتزان النفس" هو الضمانة الحقيقية لاستدامة الدورة الحيوية للشركة.
                         </div>
                         
