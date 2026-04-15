@@ -48,6 +48,12 @@
         .hide-scroll::-webkit-scrollbar { display: none; }
         .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
         
+        /* Custom Scrollbar for expanded content areas */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
         #gateway-overlay {
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
@@ -76,11 +82,6 @@
     </style>
 </head>
 <body class="text-slate-800 antialiased">
-
-<!-- Chosen Palette: Slate Backgrounds, Emerald (Primary), Indigo/Blue (Secondary), Amber (Alerts) -->
-<!-- Application Structure Plan: Dashboard-style with horizontal scrolling tabs for sections. Mirrors the requested architecture (Intro, 4 Pillars, Conclusion) + a Live Poll component. Built to provide a fully immersive storytelling and analytical experience. -->
-<!-- Visualization Choices: Doughnut (Stats), Line (Funding), Radar (Innovation/Skills), Bubble (Risk Matrix). -->
-<!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
 
 <!-- 🌟 بوابة الدخول (Gateway Screen) 🌟 -->
 <div id="gateway-overlay" class="fixed inset-0 z-50 bg-slate-900/95 flex flex-col items-center justify-center p-6 text-white transition-opacity duration-700">
@@ -182,11 +183,11 @@
         <section id="stages" class="section-content hidden fade-in">
             <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 mb-8">
                 <h2 class="text-2xl font-bold text-slate-800 mb-4 flex items-center gap-2"><span>🏗️</span> المحور الأول: الخصائص الهيكلية لمراحل النمو</h2>
-                <p class="text-slate-600 leading-relaxed mb-10 text-lg">
-                    يتطور الهيكل التنظيمي للشركة بشكل جذري. تبدأ كفريق مرن يبحث عن هوية، وتتحول تدريجياً إلى مؤسسة ذات أقسام وحوكمة. تفاعل مع الخط الزمني أدناه:
+                <p class="text-slate-600 leading-relaxed mb-8 text-lg">
+                    الشركة الناشئة <strong class="text-slate-800">ليست نسخة مصغرة من شركة كبرى</strong>. إنها كيان متقلب يتطور هيكله التنظيمي بشكل جذري للنجاة. تبدأ كفريق مرن يبحث عن نموذج عمل قابل للتكرار، وتتحول تدريجياً إلى مؤسسة تمتلك أقساماً وحوكمة صارمة. تفاعل مع الخط الزمني أدناه لفهم تشريح هذه المراحل بدقة:
                 </p>
                 
-                <div class="relative max-w-4xl mx-auto mb-10">
+                <div class="relative max-w-4xl mx-auto mb-8">
                     <div class="hidden md:block absolute top-1/2 left-0 w-full h-1 bg-slate-200 transform -translate-y-1/2 z-0"></div>
                     <div class="flex flex-col md:flex-row justify-between items-center relative z-10 space-y-6 md:space-y-0">
                         <div class="flex flex-col items-center cursor-pointer group w-1/4" onclick="updateStageDetails(0)">
@@ -208,7 +209,8 @@
                     </div>
                 </div>
                 
-                <div id="stage-details-box" class="bg-slate-50 border border-slate-200 rounded-2xl p-6 md:p-8 transition-opacity duration-300 min-h-[220px]">
+                <!-- Dynamic Box with Custom Scrollbar -->
+                <div id="stage-details-box" class="bg-slate-50 border border-slate-200 rounded-2xl p-6 md:p-8 transition-opacity duration-300 min-h-[300px] max-h-[380px] overflow-y-auto custom-scrollbar shadow-inner">
                     <!-- Injected via JS -->
                 </div>
 
@@ -216,7 +218,7 @@
                 <div class="mt-8 bg-slate-50 border border-slate-200 rounded-xl p-6 shadow-sm relative overflow-hidden card-hover">
                     <div class="absolute top-0 right-0 w-2 h-full bg-amber-500"></div>
                     <div class="flex flex-col md:flex-row items-start gap-4">
-                        <div class="text-4xl bg-white p-3 rounded-full shadow-sm border border-slate-100">🎙️</div>
+                        <div class="text-4xl bg-white p-3 rounded-full shadow-sm border border-slate-100 shrink-0">🎙️</div>
                         <div class="w-full">
                             <h4 class="font-bold text-slate-800 text-lg mb-2">إضاءة للنقاش مع الجمهور</h4>
                             <p class="text-amber-700 font-bold text-xl mb-4 italic">"هل تعتقدون أن الانتقال 'السريع جداً' بين هذه المراحل هو علامة نجاح أم إشارة خطر للشركة الناشئة؟ ولماذا؟"</p>
@@ -227,7 +229,7 @@
                                 <span class="text-sm">👁️</span>
                             </button>
                             <div id="helper-stages" class="hidden mt-2 bg-white p-4 rounded-lg border border-slate-100 shadow-inner transition-all">
-                                <p class="text-slate-600 text-sm leading-relaxed">استمع لإجاباتهم، ثم ركز هنا على مصطلح <strong class="text-slate-800">"التوسع المبكر" (Premature Scaling)</strong>. وضّح أن 70% من الشركات تفشل لأنها تحاول التصرف كشركات كبرى (إنفاق ضخم، تعيين مكثف) قبل أن تثبت حقاً أن منتجها مطلوب في السوق. النمو الصحي أفضل من النمو السريع المتهور.</p>
+                                <p class="text-slate-700 text-sm leading-relaxed font-medium">استمع لإجاباتهم، ثم ركز هنا على مصطلح <strong class="text-slate-900 bg-amber-200 px-1 rounded">"التوسع المبكر" (Premature Scaling)</strong>. وضّح أن أكثر من 70% من الشركات تفشل لأنها تحاول التصرف كشركات كبرى (إنفاق ضخم، حملات إعلانية واسعة، تعيين مكثف) قبل أن تثبت حقاً أن منتجها مطلوب في السوق ولديه قدرة على الاحتفاظ بالعملاء (Retention). النمو الصحي والبطيء أفضل من النمو السريع المتهور الذي يؤدي لنفاد السيولة.</p>
                             </div>
                         </div>
                     </div>
@@ -238,31 +240,44 @@
 
         <!-- Section: 2. Funding & Resources -->
         <section id="funding" class="section-content hidden fade-in">
-            <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 mb-8 border-t-8 border-t-blue-500">
+            <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 mb-8 border-t-8 border-t-blue-600">
                 <h2 class="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2"><span>💰</span> المحور الثاني: استراتيجيات التمويل وتدفق الموارد</h2>
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
-                    <div>
-                        <p class="text-slate-600 mb-6 leading-relaxed">
-                            إدارة التدفق النقدي هي شريان الحياة. استراتيجية التمويل يجب أن تتطابق مع مرحلة النمو؛ فالبحث عن رأس مال جريء (VC) في مرحلة التأسيس قد يؤدي لخسارة الحصص مبكراً، بينما التمويل الذاتي في مرحلة التوسع يعيق السيطرة على السوق.
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
+                    <div class="flex flex-col">
+                        <p class="text-slate-700 mb-6 leading-relaxed font-medium text-lg">
+                            إدارة التدفق النقدي هي شريان الحياة. لا توجد استراتيجية تمويل واحدة تناسب الجميع؛ بل يجب أن تتطابق جولة التمويل مع <strong class="text-blue-700">مستوى النضج الفعلي</strong> للشركة. الحصول على أموال كثيرة مبكراً قد يقتل الشركة (بسبب التخفيف السريع للملكية وفقدان الحافز) تماماً كالحصول على أموال قليلة متأخراً.
                         </p>
-                        <div class="space-y-4">
-                            <div class="bg-blue-50 p-4 rounded-lg border-r-4 border-blue-500">
-                                <h4 class="font-bold text-blue-900 mb-1">التمويل الذاتي والملائكي (Seed)</h4>
-                                <p class="text-sm text-slate-700">لإثبات الفكرة وبناء النموذج الأولي (MVP) بأقل الموارد.</p>
+                        <!-- Scrollable container for cards to maintain screen real estate -->
+                        <div class="space-y-4 flex-grow max-h-[450px] overflow-y-auto custom-scrollbar pr-2 pb-2">
+                            <div class="bg-blue-50 p-5 rounded-xl border-r-4 border-blue-500 shadow-sm card-hover">
+                                <h4 class="font-bold text-blue-900 mb-2 text-lg">التمويل الذاتي والملائكي (Seed & Bootstrapping)</h4>
+                                <ul class="list-disc pr-5 text-sm text-slate-700 leading-relaxed space-y-1">
+                                    <li><strong>الهدف الاستراتيجي:</strong> ليس بناء المنتج المثالي، بل بناء "الحد الأدنى" (MVP) بأقل تكلفة ممكنة لإثبات الفكرة والتأكد من وجود المشكلة.</li>
+                                    <li><strong>المصدر:</strong> المدخرات الشخصية، العائلة والأصدقاء، والمستثمرون الملائكيون (Angel Investors).</li>
+                                    <li><strong>التحدي الأكبر:</strong> النجاة من 'وادي الموت' المالي وتجنب التنازل عن نسبة كبيرة من الأسهم (Equity) في وقت تكون فيه تقييمات الشركة (Valuation) في أدنى مستوياتها.</li>
+                                </ul>
                             </div>
-                            <div class="bg-indigo-50 p-4 rounded-lg border-r-4 border-indigo-500">
-                                <h4 class="font-bold text-indigo-900 mb-1">السلسلة أ (Series A)</h4>
-                                <p class="text-sm text-slate-700">التمويل من رأس المال الجريء لتحسين المنتج وتوسيع قاعدة المستخدمين بعد إثبات توافق المنتج مع السوق.</p>
+                            <div class="bg-indigo-50 p-5 rounded-xl border-r-4 border-indigo-500 shadow-sm card-hover">
+                                <h4 class="font-bold text-indigo-900 mb-2 text-lg">السلسلة أ (Series A - Optimization)</h4>
+                                <ul class="list-disc pr-5 text-sm text-slate-700 leading-relaxed space-y-1">
+                                    <li><strong>الهدف الاستراتيجي:</strong> تحسين "اقتصاديات الوحدة" (Unit Economics) مثل نسبة (LTV:CAC) - أي ضمان أن الإيراد من العميل أعلى بكثير من تكلفة الاستحواذ عليه.</li>
+                                    <li><strong>المصدر:</strong> صناديق رأس المال الجريء (VCs) التي تبحث عن نموذج قابل للتوسع والنسخ.</li>
+                                    <li><strong>مؤشر النجاح:</strong> انتقال الشركة من مرحلة "هل هناك من يشتري؟" إلى مرحلة "كيف نبيع هذا لمئة ألف شخص بكفاءة؟".</li>
+                                </ul>
                             </div>
-                            <div class="bg-purple-50 p-4 rounded-lg border-r-4 border-purple-500">
-                                <h4 class="font-bold text-purple-900 mb-1">السلسلة ب و ج (Series B & C)</h4>
-                                <p class="text-sm text-slate-700">تمويل ضخم لتوسيع الحصة السوقية، الاستحواذ، أو فتح أسواق دولية جديدة.</p>
+                            <div class="bg-purple-50 p-5 rounded-xl border-r-4 border-purple-500 shadow-sm card-hover">
+                                <h4 class="font-bold text-purple-900 mb-2 text-lg">السلسلة ب و ج (Series B & C - Scaling)</h4>
+                                <ul class="list-disc pr-5 text-sm text-slate-700 leading-relaxed space-y-1">
+                                    <li><strong>الهدف الاستراتيجي:</strong> المخاطرة الفنية (Technical Risk) هنا شبه معدومة. التمويل يُستخدم كـ "وقود صاروخي" للسيطرة على الحصة السوقية.</li>
+                                    <li><strong>الآليات:</strong> الاستحواذ على شركات أصغر، فتح أسواق دولية جديدة، وبناء خندق تنافسي (Competitive Moat) لحماية المنتج من الشركات العملاقة.</li>
+                                </ul>
                             </div>
                         </div>
                     </div>
-                    <div class="bg-slate-50 p-6 rounded-xl border border-slate-200 flex flex-col">
-                        <h3 class="text-center font-bold text-slate-700 mb-4 text-sm">معدل الحرق (Burn Rate) مقابل التدفق النقدي</h3>
-                        <div class="chart-container flex-grow">
+                    <div class="bg-slate-50 p-6 rounded-xl border border-slate-200 flex flex-col shadow-inner">
+                        <h3 class="text-center font-bold text-slate-800 mb-2 text-lg">معدل الحرق (Burn Rate) والتدفق النقدي</h3>
+                        <p class="text-sm text-slate-600 text-center mb-6 px-2">يمثل الانخفاض الشديد في المنحنى الأخضر <strong class="text-red-500">"وادي الموت"</strong>، حيث تستثمر الشركة بقوة (الخط الأحمر) في بناء المنتج والتسويق، وتحرق النقد بشكل أسرع من توليدها للإيرادات في محاولة لاختراق السوق مبدئياً.</p>
+                        <div class="chart-container flex-grow min-h-[250px]">
                             <canvas id="fundingChart"></canvas>
                         </div>
                     </div>
@@ -270,12 +285,12 @@
 
                 <!-- Presenter Helper: Funding -->
                 <div class="mt-8 bg-slate-50 border border-slate-200 rounded-xl p-6 shadow-sm relative overflow-hidden card-hover">
-                    <div class="absolute top-0 right-0 w-2 h-full bg-blue-500"></div>
+                    <div class="absolute top-0 right-0 w-2 h-full bg-blue-600"></div>
                     <div class="flex flex-col md:flex-row items-start gap-4">
-                        <div class="text-4xl bg-white p-3 rounded-full shadow-sm border border-slate-100">⚖️</div>
+                        <div class="text-4xl bg-white p-3 rounded-full shadow-sm border border-slate-100 shrink-0">⚖️</div>
                         <div class="w-full">
                             <h4 class="font-bold text-slate-800 text-lg mb-2">إضاءة للنقاش مع الجمهور</h4>
-                            <p class="text-blue-700 font-bold text-xl mb-4 italic">"إذا عُرض عليك تمويل بمليون دولار في مرحلة التأسيس مقابل التنازل عن 40% من شركتك، هل تقبل؟ وما هو الثمن الحقيقي لهذا القرار؟"</p>
+                            <p class="text-blue-700 font-bold text-xl mb-4 italic">"إذا عُرض عليك تمويل بمليون دولار في مرحلة التأسيس مقابل التنازل عن 40% من شركتك، هل تقبل؟ وما هو الثمن الحقيقي الاستراتيجي لهذا القرار؟"</p>
                             
                             <!-- Collapsible Helper -->
                             <button onclick="document.getElementById('helper-funding').classList.toggle('hidden')" class="w-full text-right flex justify-between items-center bg-blue-100 hover:bg-blue-200 text-blue-800 p-3 rounded-lg transition-colors border border-blue-200 focus:outline-none">
@@ -283,7 +298,7 @@
                                 <span class="text-sm">👁️</span>
                             </button>
                             <div id="helper-funding" class="hidden mt-2 bg-white p-4 rounded-lg border border-slate-100 shadow-inner transition-all">
-                                <p class="text-slate-600 text-sm leading-relaxed">استخدم الرسم البياني لتوضيح مفهوم <strong class="text-slate-800">تخفيف الملكية (Dilution)</strong>. أكّد للحضور أن جمع الأموال ليس هو الإنجاز، بل توظيفها هو الإنجاز. التنازل عن حصة كبيرة مبكراً يُفقد المؤسس الحافز ويصعب جولات التمويل اللاحقة. الكاش أداة للوصول للمرحلة التالية، وليس غاية بحد ذاته.</p>
+                                <p class="text-slate-700 text-sm leading-relaxed font-medium">استخدم هذه الفرصة لتوضيح مفهوم <strong class="text-slate-900 bg-blue-200 px-1 rounded">تخفيف الملكية (Dilution)</strong> و <strong class="text-slate-900 bg-blue-200 px-1 rounded">تقييم ما قبل التمويل (Pre-money Valuation)</strong>. أكّد للحضور في الـ MBA أن جمع الأموال ليس هو الإنجاز أو خط النهاية، بل هو "دين" وُضع لتوظيفه بكفاءة. التنازل عن حصة كبيرة مبكراً (أكثر من 20% في الجولة الأولى) يُفقد المؤسس الحافز للعمل مستقبلاً (Founder's Trap)، ويجعل الشركة "غير قابلة للاستثمار" (Uninvestable) في الجولات اللاحقة لأن المستثمرين الجدد يفضلون أن يكون للمؤسس حصة الأسد لضمان التزامه.</p>
                             </div>
                         </div>
                     </div>
@@ -294,28 +309,43 @@
 
         <!-- Section: 3. Innovation & Leadership -->
         <section id="innovation" class="section-content hidden fade-in">
-            <div class="bg-slate-800 p-8 rounded-2xl shadow-sm text-white mb-8">
+            <div class="bg-slate-800 p-8 rounded-2xl shadow-sm text-white mb-8 border-t-8 border-t-emerald-500">
                 <h2 class="text-2xl font-bold text-amber-400 mb-6 flex items-center gap-2"><span>🧠</span> المحور الثالث: الدور الريادي والابتكار</h2>
                 
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-                    <div class="chart-container bg-slate-900 p-4 rounded-xl">
-                        <canvas id="leadershipRadarChart"></canvas>
-                    </div>
-                    <div class="space-y-6">
-                        <div>
-                            <h3 class="text-xl font-bold text-emerald-300 mb-2">من "صانع" إلى "قائد أوركسترا"</h3>
-                            <p class="text-slate-300 leading-relaxed text-sm">
-                                في البداية، الريادي هو "المبرمج، المسوق، والمحاسب". لكن مع نمو الشركة، يجب أن تتغير عقليته ليركز على وضع الرؤية الاستراتيجية، جذب الكفاءات، وبناء ثقافة مؤسسية تحفز الابتكار المستمر.
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
+                    <div class="flex flex-col">
+                        <div class="mb-6">
+                            <h3 class="text-2xl font-bold text-emerald-300 mb-3">متلازمة المؤسس: من "صانع" إلى "قائد أوركسترا"</h3>
+                            <p class="text-slate-300 leading-relaxed text-sm md:text-base text-justify">
+                                في البداية، يكون المؤسس هو المحرك الأول؛ فهو "المبرمج، المسوق، والمحاسب". لكن مع مرور الشركة بمراحل النمو، يقع العديد في ما يُعرف بـ <strong class="text-amber-300 font-bold">"متلازمة المؤسس" (Founder's Syndrome)</strong>، حيث يرفضون التخلي عن الإدارة التفصيلية للمهام (Micromanagement). 
+                                <br><br>
+                                التحول القيادي الناجح يعني التحول من "تنفيذ المهام" إلى "تمكين الكفاءات". يجب على المؤسس توجيه البوصلة نحو الرؤية الكبرى، تفويض الصلاحيات، وبناء بيئة تدعم "ريادة الأعمال الداخلية" (Intrapreneurship) حتى لا تتحول الشركة إلى كيان بيروقراطي بطيء الإيقاع.
                             </p>
                         </div>
-                        <div class="bg-slate-700 p-5 rounded-xl border-r-4 border-amber-500">
-                            <h4 class="font-bold text-white mb-2">استدامة الابتكار في المنظومة</h4>
-                            <ul class="text-sm text-slate-300 space-y-2">
-                                <li>🔸 <strong class="text-amber-200">المرونة (Pivot):</strong> القدرة على تغيير نموذج العمل بمرونة عند اصطدام الفكرة بواقع السوق.</li>
-                                <li>🔸 <strong class="text-amber-200">التعلم الموثق:</strong> تحويل الفشل إلى بيانات تبنى عليها الإصدارات القادمة من المنتج.</li>
-                                <li>🔸 <strong class="text-amber-200">اللامركزية:</strong> تمكين الموظفين في مرحلة التوسع من اتخاذ القرارات للحفاظ على سرعة الابتكار.</li>
+                        <div class="bg-slate-700 p-5 rounded-xl border-r-4 border-amber-500 shadow-md flex-grow">
+                            <h4 class="font-bold text-white mb-4 text-lg border-b border-slate-600 pb-2">كيف نأسس لثقافة "الابتكار المستدام"؟</h4>
+                            <ul class="text-sm text-slate-200 space-y-4">
+                                <li class="flex items-start gap-2">
+                                    <span class="text-amber-400 mt-1">🔸</span>
+                                    <span><strong class="text-amber-200 text-base">منهجية الرشاقة (Agile & Pivot):</strong> الخطط قابلة للكسر. المحورية (Pivot) ليست اعترافاً بالفشل، بل هي استجابة ذكية وعقلانية لبيانات السوق لتعديل مسار المنتج قبل فوات الأوان.</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-amber-400 mt-1">🔸</span>
+                                    <span><strong class="text-amber-200 text-base">حلقة التعلم الموثق (Validated Learning):</strong> الاعتماد على فلسفة (Build-Measure-Learn). لا تبني ميزات يفترض الفريق أن العميل يريدها، بل ابني تجارب تختبر بها فرضياتك بأرخص طريقة ممكنة وتتعلم من البيانات الفعلية.</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-amber-400 mt-1">🔸</span>
+                                    <span><strong class="text-amber-200 text-base">اللامركزية وتقبل المخاطرة:</strong> يجب السماح للموظفين في الخطوط الأمامية باتخاذ قرارات سريعة وتجربة أفكار جديدة تحت مبدأ "افشل بسرعة وبتكلفة منخفضة" (Fail Fast, Fail Cheap) لضمان استمرار تدفق الابتكار.</span>
+                                </li>
                             </ul>
                         </div>
+                    </div>
+                    <div class="flex flex-col bg-slate-900 p-6 rounded-xl border border-slate-700 shadow-inner">
+                        <h3 class="text-center font-bold text-slate-300 mb-4 text-sm">تطور المهارات المطلوبة (المؤسس مقابل المدير التنفيذي)</h3>
+                        <div class="chart-container flex-grow min-h-[300px]">
+                            <canvas id="leadershipRadarChart"></canvas>
+                        </div>
+                        <p class="text-xs text-slate-500 text-center mt-4">نلاحظ انخفاض الحاجة للمهارات التقنية المباشرة (الخط الرمادي) مقابل ارتفاع حاد في متطلبات الرؤية الاستراتيجية وبناء الفريق (الخط البرتقالي) مع نمو الشركة.</p>
                     </div>
                 </div>
 
@@ -323,10 +353,10 @@
                 <div class="mt-8 bg-slate-900 border border-slate-700 rounded-xl p-6 shadow-lg relative overflow-hidden card-hover">
                     <div class="absolute top-0 right-0 w-2 h-full bg-emerald-400"></div>
                     <div class="flex flex-col md:flex-row items-start gap-4">
-                        <div class="text-4xl bg-slate-800 p-3 rounded-full shadow-sm border border-slate-600">🎯</div>
+                        <div class="text-4xl bg-slate-800 p-3 rounded-full shadow-sm border border-slate-600 shrink-0">🎯</div>
                         <div class="w-full">
                             <h4 class="font-bold text-white text-lg mb-2">إضاءة للنقاش مع الجمهور</h4>
-                            <p class="text-emerald-400 font-bold text-xl mb-4 italic">"كيف يمكن للشركة أن تحافظ على 'روح الشركة الناشئة' (السرعة، الابتكار، والجرأة) عندما يصل عدد موظفيها إلى 500 موظف؟"</p>
+                            <p class="text-emerald-400 font-bold text-xl mb-4 italic">"كيف يمكن للشركة أن تحافظ على 'روح الشركة الناشئة' (السرعة، الابتكار، والجرأة) عندما تتضخم ويصل عدد موظفيها إلى أكثر من 500 موظف؟"</p>
                             
                             <!-- Collapsible Helper -->
                             <button onclick="document.getElementById('helper-innovation').classList.toggle('hidden')" class="w-full text-right flex justify-between items-center bg-slate-800 hover:bg-slate-700 text-emerald-400 p-3 rounded-lg transition-colors border border-slate-600 focus:outline-none">
@@ -334,7 +364,7 @@
                                 <span class="text-sm">👁️</span>
                             </button>
                             <div id="helper-innovation" class="hidden mt-2 bg-slate-800 p-4 rounded-lg border border-slate-600 shadow-inner transition-all">
-                                <p class="text-slate-300 text-sm leading-relaxed">وجّه انتباههم إلى المخطط الراداري. وضح أن التحول من "صانع" إلى "قائد" يعني الانتقال من تنفيذ المهام باليد إلى <strong class="text-white">تفويض الصلاحيات (Delegation)</strong> وخلق بيئة آمنة للموظفين لتجربة أفكار جديدة والفشل بسرعة (Fail Fast) دون خوف من العقاب المؤسسي.</p>
+                                <p class="text-slate-300 text-sm leading-relaxed font-medium">وجّه انتباههم إلى المخطط الراداري. التحدي الكلاسيكي لطلاب الإدارة هو (Innovator's Dilemma). وضح أن التحول من "صانع" إلى "قائد" يعني الانتقال من أداء المهام باليد إلى <strong class="text-white bg-emerald-700 px-1 rounded">خلق مساحات مستقلة للابتكار (Skunkworks)</strong> داخل الشركة نفسها، وتفويض الصلاحيات (Delegation)، وبناء "أمان نفسي" (Psychological Safety) يجعل الموظف قادراً على طرح فكرة مجنونة أو الإبلاغ عن خطأ دون خوف من التوبيخ أو الفصل. الشركات التي تعاقب الفشل، تقتل الابتكار فوراً.</p>
                             </div>
                         </div>
                     </div>
@@ -345,20 +375,23 @@
 
         <!-- Section: 4. Risks & Challenges -->
         <section id="risks" class="section-content hidden fade-in">
-            <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 mb-8 border-t-8 border-t-red-500">
+            <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 mb-8 border-t-8 border-t-red-600">
                 <h2 class="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2"><span>🛡️</span> المحور الرابع: التحديات الاستراتيجية وإدارة المخاطر</h2>
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
                     
-                    <div>
-                        <h3 class="text-lg font-bold text-slate-700 mb-4 text-center">مصفوفة المخاطر (الاحتمالية مقابل الأثر)</h3>
-                        <div class="chart-container bg-slate-50 border border-slate-200 p-4 rounded-xl">
+                    <div class="flex flex-col bg-slate-50 p-6 rounded-xl border border-slate-200 shadow-inner">
+                        <h3 class="text-lg font-bold text-slate-800 mb-2 text-center">مصفوفة المخاطر الديناميكية للشركات الناشئة</h3>
+                        <p class="text-sm text-slate-600 text-center mb-6 px-4 leading-relaxed">تجمع هذه المصفوفة بين <strong>احتمالية وقوع الخطر</strong> (المحور الأفقي) و<strong>حجم تأثيره التدميري والمالي</strong> (المحور الرأسي). حجم الفقاعة يعكس التكلفة الاستراتيجية لمعالجة المشكلة إذا وقعت. المخاطر في الربع العلوي الأيمن هي "القاتل الصامت" للمشاريع.</p>
+                        <div class="chart-container flex-grow min-h-[300px]">
                             <canvas id="riskBubbleChart"></canvas>
                         </div>
                     </div>
 
-                    <div class="flex flex-col">
-                        <h3 class="text-lg font-bold text-slate-700 mb-4">أبرز التحديات واستراتيجيات التخفيف</h3>
-                        <div class="w-full space-y-3 flex-grow" id="risks-accordion">
+                    <div class="flex flex-col h-full">
+                        <h3 class="text-xl font-bold text-slate-800 mb-4 border-b border-slate-200 pb-2">شرح التحديات واستراتيجيات التخفيف (Mitigation)</h3>
+                        <p class="text-sm text-slate-600 mb-4 font-medium">البيئة الريادية هي بيئة عالية الغموض (High Uncertainty). اضغط على التحديات أدناه لاستكشاف الأسباب العميقة والحلول العملية بناءً على أطر العمل الإدارية (Frameworks):</p>
+                        <!-- Scrollable Accordion for deep MBA knowledge -->
+                        <div class="w-full space-y-3 flex-grow max-h-[400px] overflow-y-auto custom-scrollbar pr-2" id="risks-accordion">
                             <!-- Injected via JS -->
                         </div>
                     </div>
@@ -366,12 +399,12 @@
 
                 <!-- Presenter Helper: Risks -->
                 <div class="mt-8 bg-slate-50 border border-slate-200 rounded-xl p-6 shadow-sm relative overflow-hidden card-hover">
-                    <div class="absolute top-0 right-0 w-2 h-full bg-red-500"></div>
+                    <div class="absolute top-0 right-0 w-2 h-full bg-red-600"></div>
                     <div class="flex flex-col md:flex-row items-start gap-4">
-                        <div class="text-4xl bg-white p-3 rounded-full shadow-sm border border-slate-100">♟️</div>
+                        <div class="text-4xl bg-white p-3 rounded-full shadow-sm border border-slate-100 shrink-0">♟️</div>
                         <div class="w-full">
                             <h4 class="font-bold text-slate-800 text-lg mb-2">إضاءة للنقاش مع الجمهور</h4>
-                            <p class="text-red-600 font-bold text-xl mb-4 italic">"بناءً على مصفوفة المخاطر أمامكم، متى يجب على المؤسس أن يمتلك شجاعة الاستسلام (إغلاق الشركة)، ومتى يجب أن يقاتل لتغيير المسار (Pivot)؟"</p>
+                            <p class="text-red-700 font-bold text-xl mb-4 italic">"بالنظر إلى مصفوفة المخاطر والتحديات، متى يجب على المؤسس أن يمتلك شجاعة الاستسلام وإغلاق الشركة، ومتى يجب أن يقاتل لتغيير المسار (Pivot)؟"</p>
                             
                             <!-- Collapsible Helper -->
                             <button onclick="document.getElementById('helper-risks').classList.toggle('hidden')" class="w-full text-right flex justify-between items-center bg-red-100 hover:bg-red-200 text-red-800 p-3 rounded-lg transition-colors border border-red-200 focus:outline-none">
@@ -379,7 +412,7 @@
                                 <span class="text-sm">👁️</span>
                             </button>
                             <div id="helper-risks" class="hidden mt-2 bg-white p-4 rounded-lg border border-slate-100 shadow-inner transition-all">
-                                <p class="text-slate-600 text-sm leading-relaxed">هنا تبرز أهمية الإدارة الاستباقية. اشرح أن الخطر الحقيقي ليس في مواجهة العقبات، بل في التعلق العاطفي بالمنتج متجاهلاً بيانات السوق. <strong class="text-slate-800">التخارج المبكر أو التحول الجذري (Pivot)</strong> هو قرار استراتيجي شجاع يوقف النزيف المالي، وليس بالضرورة علامة فشل للمؤسس.</p>
+                                <p class="text-slate-700 text-sm leading-relaxed font-medium">هنا تبرز أهمية الإدارة الاستباقية ومفهوم (Sunk Cost Fallacy - مغالطة التكلفة الغارقة). اشرح للحضور أن الخطر الحقيقي ليس في مواجهة العقبات، بل في <strong class="text-slate-900 bg-red-200 px-1 rounded">التعلق العاطفي الأعمى بالمنتج</strong> وتجاهل البيانات الصلبة من السوق. القرار يعتمد على "المدرج المالي" (Runway): إذا كان لديك كاش يكفي للقيام بتجربة منتج جديد كلياً (Pivot)، فافعلها. إذا نفد الكاش تماماً وانعدمت الثقة مع المستثمرين، فالتخارج المبكر والمنظم (Shutting down gracefully) يوقف النزيف المالي ويحافظ على سمعة المؤسس لشركته القادمة، وهو ليس بالضرورة وصمة عار أو فشل نهائي.</p>
                             </div>
                         </div>
                     </div>
@@ -398,7 +431,6 @@
                             <h2 class="text-2xl font-bold text-slate-900 flex items-center gap-2">
                                 <span class="text-blue-600">📡</span> نبض الجمهور: استطلاع سحابي مباشر
                             </h2>
-                            <!-- Admin Reset: Moved from absolute positioning to flex layout -->
                             <button onclick="openPwdModal()" class="bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 px-3 py-1.5 rounded-lg text-sm font-bold flex items-center gap-2 transition-colors shadow-sm hover:shadow focus:outline-none">
                                 <span>🗑️</span> مسح البيانات (إدارة)
                             </button>
@@ -780,12 +812,12 @@
         options: { ...commonOptions, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
     });
 
-    // 2. Stages Timeline Logic
+    // 2. Stages Timeline Logic (Expanded Explanations - MBA level depth)
     const stagesData = [
-        { t: "مرحلة التأسيس (Seed)", h: "فريق صغير غير رسمي (مؤسسين فقط).", m: "التمويل من الأصدقاء، العائلة، وحاضنات الأعمال.", c: "بناء نموذج أولي (MVP) بأقل تكلفة ممكنة." },
-        { t: "مرحلة الانطلاق (Early/Series A)", h: "بداية الهيكلة وتوظيف كفاءات متخصصة.", m: "رأس مال جريء (VC) لدعم التسويق.", c: "إثبات ملاءمة المنتج للسوق (PMF)." },
-        { t: "التوسع والنمو (Scaling)", h: "هيكل إداري هرمي ووجود إدارة وسطى.", m: "جولات تمويلية ضخمة (Series B, C).", c: "استنساخ النجاح في أسواق جديدة وإدارة النمو السريع." },
-        { t: "النضج المؤسسي (Maturity)", h: "حوكمة شركات، ومجالس إدارة رسمية.", m: "إيرادات مستقرة، الاستعداد للاكتتاب العام (IPO).", c: "الحفاظ على روح الابتكار وتجنب البيروقراطية." }
+        { t: "مرحلة التأسيس (Seed)", h: "فريق صغير جداً (المؤسسين فقط). لا توجد بيروقراطية، بل مرونة مطلقة لاتخاذ قرارات سريعة وتغيير المسار يومياً بناءً على ردود أفعال العملاء الأوائل.", m: "تمويل ذاتي (Bootstrapping)، أو مدخرات، أو مستثمرون ملائكيون (Angel Investors). الهدف هو حرق أقل قدر ممكن من النقد لتفادي التخفيف المبكر للحصص.", c: "بناء 'الحد الأدنى من المنتج القابل للتطبيق' (MVP). التحدي الأكبر ليس في البرمجة أو التصنيع، بل في النزول للسوق واختبار الفرضيات لإثبات أن المشكلة التي تحلها موجودة فعلاً، وأن العميل مستعد للدفع مقابل الحل." },
+        { t: "مرحلة الانطلاق (Early/Series A)", h: "بداية الهيكلة. يتم توظيف كفاءات متخصصة (مدير مبيعات، مسؤول تسويق). تظهر هنا التحديات الإدارية الأولى حيث يحتاج الفريق لآليات تواصل وتفويض واضحة بدلاً من الإدارة العشوائية.", m: "صناديق رأس المال الجريء (VCs). التمويل يُستخدم لضبط وتحسين 'اقتصاديات الوحدة' (Unit Economics) وإيجاد قناة تسويق مستدامة لا تكلف أكثر من العائد.", c: "الوصول إلى 'ملاءمة المنتج للسوق' (Product-Market Fit). العلامة الأكيدة لذلك هي أن المنتج يُسحب من قبل السوق بسرعة تفوق قدرتك على تلبية الطلب، مع معدلات احتفاظ عالية (High Retention)." },
+        { t: "التوسع والنمو (Scaling)", h: "تأسيس إدارة وسطى (Middle Management). إرساء أدلة تشغيل موحدة (SOPs) ومؤشرات أداء (KPIs) لضمان أن مضاعفة عدد الموظفين لا يؤدي إلى انهيار الجودة أو الثقافة الداخلية للشركة.", m: "جولات تمويلية ضخمة (Series B, C) بملايين الدولارات تُستخدم كـ 'وقود صاروخي' لآلة مبيعات أثبتت كفاءتها مسبقاً، وللهيمنة على السوق قبل المنافسين.", c: "إدارة النمو الانفجاري (Hyper-growth). التحدي هو استنساخ النجاح الأولي في أسواق جغرافية جديدة، أو إطلاق خطوط إنتاج جديدة، مع الحفاظ على سرعة الاستجابة وروح الابتكار الأساسية." },
+        { t: "النضج المؤسسي (Maturity)", h: "حوكمة شركات شاملة (Corporate Governance)، مجالس إدارة رسمية مستقلة، وإدارات للامتثال القانوني. الشركة تصبح كياناً ضخماً، منظماً، وبطيء التغيير نسبياً.", m: "تدفقات نقدية وإيرادات مستقرة وعالية. التوجه نحو الاكتتاب العام في البورصة (IPO) لتوفير سيولة (Exit) للمستثمرين الأوائل والموظفين، أو الاستحواذ على شركات منافسة.", c: "تجنب معضلة المبتكر (Innovator's Dilemma). التحدي الأكبر هو ألا تغرق الشركة في البيروقراطية وتتوقف عن الابتكار، مما يسمح لشركات ناشئة أحدث وأصغر بتدمير حصتها السوقية (Disruption)." }
     ];
     window.updateStageDetails = function(idx) {
         document.querySelectorAll('.stage-dot').forEach((dot, i) => {
@@ -796,9 +828,11 @@
         box.style.opacity = 0;
         setTimeout(() => {
             box.innerHTML = `<h3 class="text-2xl font-bold text-emerald-800 mb-5 border-b border-slate-200 pb-3">${d.t}</h3>
-                             <p class="mb-3"><strong>🏢 الهيكل:</strong> ${d.h}</p>
-                             <p class="mb-3"><strong>💵 التمويل:</strong> ${d.m}</p>
-                             <p class="mb-3"><strong>🎯 التحدي:</strong> ${d.c}</p>`;
+                             <div class="space-y-4">
+                                <p class="leading-relaxed"><strong class="text-slate-900 bg-slate-200 px-2 py-1 rounded inline-block mb-1">🏢 الهيكل والإدارة:</strong> <span class="text-slate-700 block mt-1">${d.h}</span></p>
+                                <p class="leading-relaxed"><strong class="text-slate-900 bg-slate-200 px-2 py-1 rounded inline-block mb-1">💵 التمويل والموارد:</strong> <span class="text-slate-700 block mt-1">${d.m}</span></p>
+                                <p class="leading-relaxed"><strong class="text-slate-900 bg-slate-200 px-2 py-1 rounded inline-block mb-1">🎯 التحدي الاستراتيجي:</strong> <span class="text-slate-700 block mt-1">${d.c}</span></p>
+                             </div>`;
             box.style.opacity = 1;
         }, 150);
     };
@@ -821,40 +855,41 @@
     new Chart(document.getElementById('leadershipRadarChart').getContext('2d'), {
         type: 'radar',
         data: {
-            labels: ['تطوير تقني', 'تسويق ومبيعات', 'الرؤية الاستراتيجية', 'بناء الفريق', 'المرونة', 'التحليل المالي'],
+            labels: ['المهارات التقنية/الإنتاج', 'التسويق وتطوير الأعمال', 'الرؤية الاستراتيجية', 'بناء وإدارة الفريق', 'المرونة التكتيكية', 'الإدارة المالية المتقدمة'],
             datasets: [
-                { label: 'مرحلة التأسيس (المنفذ)', data: [90, 60, 40, 30, 95, 30], backgroundColor: 'rgba(148, 163, 184, 0.3)', borderColor: '#94a3b8' },
-                { label: 'مرحلة التوسع (القائد)', data: [40, 75, 95, 90, 70, 85], backgroundColor: 'rgba(245, 158, 11, 0.3)', borderColor: '#f59e0b' }
+                { label: 'مرحلة التأسيس (Founder)', data: [90, 70, 40, 30, 95, 20], backgroundColor: 'rgba(148, 163, 184, 0.3)', borderColor: '#94a3b8' },
+                { label: 'مرحلة التوسع (CEO)', data: [30, 60, 95, 90, 60, 85], backgroundColor: 'rgba(245, 158, 11, 0.3)', borderColor: '#f59e0b' }
             ]
         },
-        options: { ...commonOptions, scales: { r: { ticks: { display: false }, grid: { color: 'rgba(255,255,255,0.1)' }, pointLabels: { color: '#e2e8f0' } } }, plugins: { legend: { position: 'bottom', labels: { color: '#fff' } } } }
+        options: { ...commonOptions, scales: { r: { ticks: { display: false }, grid: { color: 'rgba(255,255,255,0.1)' }, pointLabels: { color: '#e2e8f0', font: {size: 11} } } }, plugins: { legend: { position: 'bottom', labels: { color: '#fff' } } } }
     });
 
-    // 5. Risks & Accordion
+    // 5. Risks & Accordion (Deep Strategic Mitigation Strategies)
     new Chart(document.getElementById('riskBubbleChart').getContext('2d'), {
         type: 'bubble',
         data: {
             datasets: [
-                { label: 'نفاد السيولة', data: [{x: 80, y: 90, r: 20}], backgroundColor: 'rgba(239, 68, 68, 0.7)' },
-                { label: 'فشل الملاءمة (PMF)', data: [{x: 60, y: 85, r: 15}], backgroundColor: 'rgba(245, 158, 11, 0.7)' },
-                { label: 'تفكك المؤسسين', data: [{x: 40, y: 70, r: 12}], backgroundColor: 'rgba(139, 92, 246, 0.7)' },
-                { label: 'المنافسة الكبرى', data: [{x: 70, y: 50, r: 18}], backgroundColor: 'rgba(59, 130, 246, 0.7)' }
+                { label: 'نفاد السيولة (الكاش)', data: [{x: 80, y: 90, r: 22}], backgroundColor: 'rgba(239, 68, 68, 0.7)' },
+                { label: 'عدم الملاءمة للسوق (PMF)', data: [{x: 65, y: 85, r: 18}], backgroundColor: 'rgba(245, 158, 11, 0.7)' },
+                { label: 'تفكك فريق المؤسسين', data: [{x: 45, y: 75, r: 15}], backgroundColor: 'rgba(139, 92, 246, 0.7)' },
+                { label: 'صدمات المنافسة الكبرى', data: [{x: 75, y: 55, r: 14}], backgroundColor: 'rgba(59, 130, 246, 0.7)' }
             ]
         },
         options: { 
             ...commonOptions, 
-            scales: { x: { title: {display:true, text:'الاحتمالية %'}, min:0, max:100 }, y: { title: {display:true, text:'الأثر السلبي %'}, min:0, max:100 } }
+            scales: { x: { title: {display:true, text:'الاحتمالية %'}, min:0, max:100 }, y: { title: {display:true, text:'الأثر السلبي (المالي والتدميري) %'}, min:0, max:100 } }
         }
     });
 
     const riskDataList = [
-        { r: 'نفاد السيولة قبل الوصول للربحية', m: 'تقليل نفقات التشغيل مبدئياً وتجنب التوظيف الزائد قبل إثبات نموذج العمل.' },
-        { r: 'تطوير منتج لا يريده السوق', m: 'الاعتماد على منهجية (Lean Startup) والنزول للسوق للتحقق مبكراً.' },
-        { r: 'خلافات المؤسسين وتفكك الفريق', m: 'توقيع اتفاقيات واضحة للشراكة (Vesting Schedules) وشفافية التواصل.' }
+        { r: 'نفاد السيولة والنقد (Burn Rate Crisis)', m: 'تطبيق مبادئ الإدارة الرشيقة (Lean Startup) من خلال المراقبة الأسبوعية الصارمة للتدفقات النقدية. تجنب النفقات الرأسمالية العالية (الاستئجار الفاخر، التوظيف المفرط) قبل إثبات نموذج العمل. القاعدة الذهبية: احتفظ دائماً بمدرج مالي (Cash Runway) يكفي لـ 6 إلى 9 أشهر لتجنب اتخاذ قرارات يائسة أو قبول شروط تمويل مجحفة.' },
+        { r: 'بناء منتج لا يريده السوق (No Product-Market Fit)', m: 'الالتزام الصارم بمنهجية اكتشاف العملاء (Customer Discovery). يجب ألا تُكتب سطر كود واحد قبل التحدث وجهاً لوجه مع 50 عميلاً محتملاً على الأقل. استخدم النماذج الأولية السريعة (Wireframes, Fake Doors) لاختبار استعداد العملاء الحقيقي للدفع، واحرص على قياس التفاعل (Engagement) بدلاً من الانخداع بمقاييس الغرور (Vanity Metrics) كأعداد الزيارات.' },
+        { r: 'النزاعات الصامتة وتفكك المؤسسين (Founders Fallout)', m: 'يُعد هذا الخطر من الأسباب الخفية الأكثر شيوعاً للفشل. الحل هو التوقيع المبكر على اتفاقية مساهمين (Founders Agreement) تتضمن جدول استحقاق أسهم (Vesting Schedule) بمدة 4 سنوات مع فترة اختبار لسنة (1-Year Cliff). هذا يحمي الشركة بحيث لا يخرج مؤسس مبكراً آخذاً معه نصف الشركة ليعيق دخول أي مستثمر لاحق. الشفافية في تقسيم الصلاحيات أمر حتمي.' },
+        { r: 'استنساخ الفكرة أو الهجوم من الشركات العملاقة', m: 'الشركات الكبرى بطيئة ولا تخاطر بسمعتها في أسواق غير مجربة. درع حمايتك (Competitive Moat) ليس التكنولوجيا التي تُنسخ، بل التركيز الهائل على شريحة محددة (Niche)، سرعة الابتكار، وتقديم خدمة عملاء فائقة الشخصنة. ابنِ ولاءً مجتمعياً حول علامتك التجارية؛ العملاء المخلصون لا يغادرون بسهولة حتى لو قدم المنافس الأكبر منتجاً أرخص.' }
     ];
     const accRisk = document.getElementById('risks-accordion');
     riskDataList.forEach((item, idx) => {
-        accRisk.innerHTML += `<div class="border border-slate-200 rounded-xl bg-slate-50"><button class="w-full px-5 py-3 text-right flex justify-between font-bold text-slate-800" onclick="document.getElementById('r-content-${idx}').classList.toggle('hidden')"><span>⚠️ ${item.r}</span></button><div id="r-content-${idx}" class="hidden px-5 py-3 border-t border-slate-200 text-sm text-slate-700 bg-white">✅ ${item.m}</div></div>`;
+        accRisk.innerHTML += `<div class="border border-slate-200 rounded-xl bg-slate-50 overflow-hidden"><button class="w-full px-5 py-4 text-right flex justify-between items-center font-bold text-slate-800 bg-slate-100 hover:bg-slate-200 transition-colors" onclick="document.getElementById('r-content-${idx}').classList.toggle('hidden')"><span class="flex items-center gap-2 text-base md:text-lg">⚠️ ${item.r}</span><span class="text-slate-400 text-sm whitespace-nowrap mr-2">تفاصيل ▼</span></button><div id="r-content-${idx}" class="hidden px-6 py-5 border-t border-slate-200 text-sm md:text-base text-slate-700 bg-white leading-relaxed"><strong class="text-slate-800 bg-slate-100 px-2 py-1 rounded inline-block mb-2">✅ استراتيجية التخفيف والحل:</strong><br><span class="block">${item.m}</span></div></div>`;
     });
 
     // --- Poll & QR ---
