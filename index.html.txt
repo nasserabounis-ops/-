@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>استراتيجيات النجاة من "وادي الموت" وتحقيق النمو في الشركات الناشئة</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            overflow-x: hidden; 
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        .small-chart-container {
+            position: relative;
+            width: 100%;
+            height: 250px;
+        }
+        @media (max-width: 768px) {
+            .chart-container { height: 280px; }
+            .small-chart-container { height: 200px; }
+        }
+        .interactive-card { transition: all 0.3s ease; }
+        .interactive-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .hide-scroll::-webkit-scrollbar { display: none; }
+        .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        #gateway-overlay {
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        
+        /* Fallback Immersive Mode if Native Fullscreen is blocked by iframe policy */
+        .pseudo-fullscreen {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            z-index: 99999 !important;
+            background-color: #f8fafc !important;
+            overflow-y: auto !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased">
+
+<!-- 🌟 بوابة الدخول (Gateway Screen) 🌟 -->
+<div id="gateway-overlay" class="fixed inset-0 z-50 bg-slate-900/95 flex flex-col items-center justify-center p-6 text-white transition-opacity duration-700">
+    <div class="max-w-3xl text-center space-y-6 animate-fade-in">
+        <div class="text-7xl md:text-8xl mb-6 drop-shadow-lg">🚀</div>
+        <h1 class="text-4xl md:text-5xl font-extrabold text-blue-300 leading-tight mb-2">دليل الشركات الناشئة التفاعلي</h1>
+        <h2 class="text-xl md:text-2xl font-medium text-emerald-400 mb-6">استراتيجيات النجاة من "وادي الموت" وتحقيق النمو</h2>
+        <div id="cloud-sync-status" class="bg-blue-800/50 p-3 rounded-lg border border-blue-500/30 text-blue-200 text-sm mb-4 animate-pulse">
+            جاري الاتصال بالخادم السحابي للمزامنة الحية... ☁️
+        </div>
+        <p class="text-lg text-slate-300 max-w-xl mx-auto leading-relaxed mb-8">
+            تم تصميم هذه المنصة التفاعلية لتقديم تجربة غامرة لرواد الأعمال. للحصول على أفضل تجربة قراءة ومشاركة في الاستطلاعات المباشرة (خاصة على الهواتف)، يُنصح بالدخول بوضع <strong>ملء الشاشة</strong>.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center mt-8">
+            <button onclick="enterExperience(true)" id="btn-enter-fs" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 px-8 rounded-full shadow-[0_0_20px_rgba(37,99,235,0.4)] transform hover:scale-105 transition-all text-lg flex items-center justify-center gap-2 disabled:opacity-50" disabled>
+                <span>📱💻</span> ابدأ الرحلة (ملء الشاشة)
+            </button>
+            <button onclick="enterExperience(false)" id="btn-enter-normal" class="bg-slate-700 hover:bg-slate-600 text-white font-bold py-4 px-8 rounded-full shadow-lg hover:shadow-xl transition-all text-lg disabled:opacity-50" disabled>
+                الاستمرار بالوضع العادي
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- 🔐 Password Modal for Reset 🔐 -->
+<div id="password-modal" class="fixed inset-0 z-[60] bg-slate-900/80 flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+    <div class="bg-white p-6 rounded-2xl shadow-2xl max-w-sm w-full mx-4 transform scale-95 transition-transform duration-300" id="password-modal-content">
+        <h3 class="text-xl font-bold text-slate-800 mb-2 flex items-center gap-2"><span>🔒</span> صلاحية المسؤول</h3>
+        <p class="text-slate-500 mb-6 text-sm leading-relaxed">يرجى إدخال كلمة المرور السرية لمسح جميع إحصائيات الحضور من السحابة والبدء من جديد.</p>
+        <input type="password" id="admin-password" class="w-full border border-slate-300 rounded-lg p-3 mb-2 focus:ring-2 focus:ring-red-500 outline-none text-left font-sans" placeholder="••••••••" dir="ltr">
+        <p id="pwd-error" class="text-red-500 text-xs mb-6 hidden font-bold">❌ كلمة المرور غير صحيحة، حاول مجدداً!</p>
+        <div class="flex justify-end gap-3 mt-4">
+            <button onclick="closePwdModal()" class="px-5 py-2 text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg font-bold transition-colors">إلغاء</button>
+            <button onclick="confirmReset()" class="px-5 py-2 text-white bg-red-600 hover:bg-red-700 rounded-lg font-bold transition-colors shadow-md flex items-center gap-1">
+                <span id="reset-loader" class="hidden animate-spin">⏳</span> تأكيد المسح 🗑️
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" id="main-app-content">
+    <header class="mb-10 text-center md:text-right flex flex-col md:flex-row justify-between items-center bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+        <div>
+            <h1 class="text-3xl md:text-4xl font-extrabold text-blue-900 mb-2">استراتيجيات النجاة من "وادي الموت"</h1>
+            <p class="text-slate-500 text-lg">بحث تحليلي شامل لرحلة النمو، الابتكار، والذكاء العاطفي للشركات الناشئة</p>
+        </div>
+        <button onclick="toggleFullScreen()" class="mt-6 md:mt-0 bg-blue-50 hover:bg-blue-100 text-blue-800 px-6 py-4 rounded-xl font-bold text-lg shadow-inner border border-blue-200 flex items-center gap-3 transition-colors focus:outline-none" title="تبديل وضع ملء الشاشة">
+            <span id="fs-icon">⛶</span> <span id="fs-text">ملء الشاشة</span>
+        </button>
+    </header>
+
+    <nav class="flex overflow-x-auto hide-scroll border-b border-slate-200 mb-8 sticky top-0 bg-slate-50 z-10 pt-2">
+        <button data-target="overview" class="tab-btn active-tab px-6 py-4 text-lg font-bold text-blue-700 border-b-4 border-blue-700 whitespace-nowrap transition-colors">الرؤية والملخص</button>
+        <button data-target="growth-stages" class="tab-btn px-6 py-4 text-lg font-bold text-slate-500 border-b-4 border-transparent hover:text-slate-700 whitespace-nowrap transition-colors">مراحل وهيكل النمو</button>
+        <button data-target="concepts" class="tab-btn px-6 py-4 text-lg font-bold text-slate-500 border-b-4 border-transparent hover:text-slate-700 whitespace-nowrap transition-colors">إدارة المخاطر</button>
+        <button data-target="challenges" class="tab-btn px-6 py-4 text-lg font-bold text-slate-500 border-b-4 border-transparent hover:text-slate-700 whitespace-nowrap transition-colors">التحديات والحلول</button>
+        <button data-target="interactive-poll" class="tab-btn px-6 py-4 text-lg font-bold text-slate-500 border-b-4 border-transparent hover:text-slate-700 whitespace-nowrap transition-colors text-emerald-600 flex items-center gap-2">
+            <span id="cloud-indicator" class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+            📡 نبض الجمهور (سحابي)
+        </button>
+        <button data-target="conclusion" class="tab-btn px-6 py-4 text-lg font-bold text-slate-500 border-b-4 border-transparent hover:text-slate-700 whitespace-nowrap transition-colors">الخاتمة والذكاء العاطفي</button>
+    </nav>
+
+    <main>
+        <!-- Section: Overview -->
+        <section id="overview" class="section-content block animate-fade-in">
+            <div class="bg-gradient-to-r from-blue-900 to-indigo-900 p-8 md:p-10 rounded-2xl shadow-xl mb-10 text-white relative overflow-hidden">
+                <div class="absolute top-0 right-0 opacity-10 text-9xl transform translate-x-4 -translate-y-4">💡</div>
+                <h2 class="text-3xl font-bold mb-6 text-blue-200 flex items-center gap-3"><span>📖</span> قصة إنسانية بامتياز</h2>
+                <div class="space-y-4 text-lg leading-relaxed text-blue-50 relative z-10 font-light">
+                    <p>في عالم يمتلئ بالضجيج والروتين، تبرز ريادة الأعمال لا كواجهة تجارية أو مجرد أرقام في ميزانيات صماء، بل كقصة إنسانية بامتياز؛ قصة بطلها "فكرة" ولدت من رحم الحاجة، ومحركها "شغف" لا يعرف المستحيل. إن الحديث عن دورة حياة الشركات الناشئة هو في جوهره حديث عن رحلة كفاح تشبه رحلة نمو الإنسان؛ تبدأ بصرخة ميلاد واعدة، وتمر بعثرات النمو، لتصل في النهاية إلى مرحلة النضج الذي يترك بصمة لا تُمحى في جدار المجتمع.</p>
+                    <p>إن ريادة الأعمال ليست مجرد "مهنة"، بل هي حالة ذهنية ونبض يتحدى الركود. هي ذلك النور الذي يلمع في عيني شاب يحلم بتغيير العالم من مكتبه الصغير، وهي الأمل الذي يغذي المجتمعات عندما تضيق الحلول التقليدية. الشركات الناشئة هي "الخلايا الجذعية" للاقتصاد الحديث؛ تمتلك تلك القدرة المذهلة على التحول والتشكل لتسد الفجوات، وتداوي المشكلات التقنية أو الاجتماعية بمرهم الابتكار.</p>
+                    <p>عندما نتأمل دورة حياة هذه الشركات، نرى أمامنا ملاحم من الصبر. نرى مرحلة "البذرة" حيث يُبذل الجهد في الخفاء دون أن يرى أحدٌ الثمر، ونرى شجاعة الوقوف في وجه "وادي الموت" حيث تختبر الحياة صدق الإرادة وقوة التحمل. هي رحلة انتقال من "الأنا" (المؤسس) إلى "النحن" (الفريق والمجتمع)، حيث تتحول الرؤية الفردية إلى كيان مؤسسي يطعم آلاف الأسر.</p>
+                    <p>إن دور هذه الشركات هو دور "الملهم" و"المحرك"؛ هي ليست مجرد مشاريع تهدف للربح، بل هي رسائل حب موجهة للمستقبل، تؤكد أن التغيير ممكن.</p>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-100 mb-8">
+                <h2 class="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2"><span>📊</span> الإطار التحليلي للمنصة</h2>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="bg-slate-50 p-6 rounded-xl border border-slate-200">
+                        <h3 class="text-xl font-bold text-center text-slate-700 mb-6">منحنى "وادي الموت" (التحدي الأكبر)</h3>
+                        <div class="chart-container">
+                            <canvas id="deathValleyChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="bg-slate-50 p-6 rounded-xl border border-slate-200">
+                        <h3 class="text-xl font-bold text-center text-slate-700 mb-6">نطاق البحث والتصنيف المنهجي</h3>
+                        <div class="chart-container">
+                            <canvas id="startupTypesChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Growth Stages -->
+        <section id="growth-stages" class="section-content hidden animate-fade-in">
+            <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-100 mb-8">
+                <h2 class="text-2xl font-bold text-slate-800 mb-4 flex items-center gap-2"><span>📈</span> الخصائص الهيكلية لمراحل النمو</h2>
+                <p class="text-slate-600 leading-relaxed mb-10 text-lg">
+                    تتغير الخصائص الهيكلية والتنظيمية للشركة جذرياً مع انتقالها من مرحلة الفكرة إلى النضوج. تفاعل مع خط الزمن أدناه لاستكشاف هذه التغيرات.
+                </p>
+                <div class="relative max-w-4xl mx-auto mb-10">
+                    <div class="hidden md:block absolute top-1/2 left-0 w-full h-1 bg-slate-200 transform -translate-y-1/2 z-0"></div>
+                    <div class="flex flex-col md:flex-row justify-between items-center relative z-10 space-y-6 md:space-y-0">
+                        <div class="flex flex-col items-center cursor-pointer group w-1/5" onclick="updateStageDetails(0)">
+                            <div id="stage-dot-0" class="stage-dot w-14 h-14 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-xl border-4 border-white shadow-md transition-all">1</div>
+                            <span class="mt-3 font-bold text-slate-700 text-sm text-center">التأسيس</span>
+                        </div>
+                        <div class="flex flex-col items-center cursor-pointer group w-1/5" onclick="updateStageDetails(1)">
+                            <div id="stage-dot-1" class="stage-dot w-14 h-14 rounded-full bg-slate-300 text-slate-600 flex items-center justify-center font-bold text-xl border-4 border-white shadow-md transition-all">2</div>
+                            <span class="mt-3 font-bold text-slate-700 text-sm text-center">وادي الموت</span>
+                        </div>
+                        <div class="flex flex-col items-center cursor-pointer group w-1/5" onclick="updateStageDetails(2)">
+                            <div id="stage-dot-2" class="stage-dot w-14 h-14 rounded-full bg-slate-300 text-slate-600 flex items-center justify-center font-bold text-xl border-4 border-white shadow-md transition-all">3</div>
+                            <span class="mt-3 font-bold text-slate-700 text-sm text-center">الإيرادات المبكرة</span>
+                        </div>
+                        <div class="flex flex-col items-center cursor-pointer group w-1/5" onclick="updateStageDetails(3)">
+                            <div id="stage-dot-3" class="stage-dot w-14 h-14 rounded-full bg-slate-300 text-slate-600 flex items-center justify-center font-bold text-xl border-4 border-white shadow-md transition-all">4</div>
+                            <span class="mt-3 font-bold text-slate-700 text-sm text-center">النمو والتوسع</span>
+                        </div>
+                        <div class="flex flex-col items-center cursor-pointer group w-1/5" onclick="updateStageDetails(4)">
+                            <div id="stage-dot-4" class="stage-dot w-14 h-14 rounded-full bg-slate-300 text-slate-600 flex items-center justify-center font-bold text-xl border-4 border-white shadow-md transition-all">5</div>
+                            <span class="mt-3 font-bold text-slate-700 text-sm text-center">النضوج (Unicorn)</span>
+                        </div>
+                    </div>
+                </div>
+                <div id="stage-details-box" class="bg-slate-50 border border-slate-200 rounded-2xl p-6 md:p-8 transition-opacity duration-300 min-h-[250px]">
+                    <!-- Injected by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Concepts & Risk -->
+        <section id="concepts" class="section-content hidden animate-fade-in">
+            <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-100 mb-8">
+                <div class="bg-slate-900 rounded-2xl p-6 md:p-10 text-white shadow-xl">
+                    <h3 class="text-2xl font-bold mb-6 text-center text-blue-200">مصفوفة تقييم وإدارة المخاطر</h3>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+                        <div class="chart-container">
+                            <canvas id="riskRadarChart"></canvas>
+                        </div>
+                        <div class="space-y-4" id="risk-details-container">
+                            <div class="bg-slate-800 p-5 rounded-lg border-r-4 border-blue-400 cursor-pointer hover:bg-slate-700 transition" onclick="updateRiskDetail(0)">
+                                <h4 class="font-bold text-lg mb-1">البنية التحتية</h4>
+                            </div>
+                            <div class="bg-slate-800 p-5 rounded-lg border-r-4 border-emerald-400 cursor-pointer hover:bg-slate-700 transition" onclick="updateRiskDetail(1)">
+                                <h4 class="font-bold text-lg mb-1">سلاسل التوريد</h4>
+                            </div>
+                            <div class="bg-slate-800 p-5 rounded-lg border-r-4 border-amber-400 cursor-pointer hover:bg-slate-700 transition" onclick="updateRiskDetail(2)">
+                                <h4 class="font-bold text-lg mb-1">البيئة التنظيمية</h4>
+                            </div>
+                            <div id="risk-display-box" class="mt-4 p-4 bg-slate-700 text-blue-100 rounded-lg text-sm leading-relaxed min-h-[80px]">
+                                👈 انقر على أحد المخاطر لعرض التفاصيل.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Challenges -->
+        <section id="challenges" class="section-content hidden animate-fade-in">
+            <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-100 mb-8">
+                <h2 class="text-2xl font-bold text-slate-800 mb-6"><span>⚖️</span> أبرز التحديات والحلول المنهجية</h2>
+                <div class="w-full space-y-4" id="challenges-accordion">
+                    <!-- Injected by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Interactive Live Poll -->
+        <section id="interactive-poll" class="section-content hidden animate-fade-in">
+            <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-100 mb-8 border-t-4 border-t-emerald-500 relative">
+                
+                <!-- Admin Reset Button -->
+                <button onclick="openPwdModal()" class="absolute top-6 left-6 bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition-colors shadow-sm focus:outline-none z-10">
+                    <span>🗑️</span> مسح الإحصائيات المركزية
+                </button>
+
+                <div class="flex flex-col justify-between items-start mb-8 gap-4 mt-8 md:mt-0">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-800 flex items-center gap-2">
+                            <span>📡</span> نبض الجمهور: استطلاع تفاعلي سحابي
+                        </h2>
+                        <p class="text-slate-600 mt-2 text-lg max-w-3xl">شاركنا رأيك من جهازك الآن. يتم جمع بيانات جميع الحضور وعرضها بشكل مركزي ولحظي.</p>
+                    </div>
+                    
+                    <!-- Dynamic QR Code & URL Setting -->
+                    <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl flex flex-col items-center gap-3 shadow-sm w-full md:w-auto">
+                        <div id="qrcode" class="p-2 bg-white rounded border border-slate-200 shadow-sm min-w-[120px] min-h-[120px] flex items-center justify-center"></div>
+                        <div class="text-sm w-full">
+                            <strong class="text-slate-800 block mb-2 text-center font-bold">امسح الكود لفتح الرابط بهاتفك</strong>
+                            <div class="relative">
+                                <span class="absolute right-2 top-2 text-slate-400 text-xs">🔗</span>
+                                <input type="text" id="public-url-input" class="w-full text-xs py-2 pl-2 pr-6 border border-slate-300 rounded text-left focus:ring-2 focus:ring-emerald-500 outline-none transition-all" dir="ltr" placeholder="أدخل رابطاً عاماً لتحديث الكود..." oninput="debounceUpdateQR()">
+                            </div>
+                            <p class="text-xs text-slate-500 mt-2 text-center leading-relaxed">إذا كان الرابط الحالي (مغلقاً)، قم برفع الملف على استضافة مجانية والصق الرابط العام هنا لتتمكن الهواتف من مسحه.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Voting Form -->
+                    <div class="bg-slate-50 p-6 rounded-xl border border-slate-200 lg:col-span-1 shadow-inner relative overflow-hidden">
+                        <h3 class="font-bold text-blue-900 mb-4 text-lg border-b border-slate-200 pb-2">📱 نموذج المشاركة (مرتبط بالسحابة)</h3>
+                        <form id="audiencePollForm" class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-1">خلفيتك الأساسية:</label>
+                                <select id="poll-background" class="w-full border border-slate-300 p-2 rounded focus:ring-2 focus:ring-emerald-500 outline-none bg-white" required>
+                                    <option value="" disabled selected>اختر...</option>
+                                    <option value="academic">أكاديمية / بحثية</option>
+                                    <option value="practical">عملية / سوق العمل</option>
+                                    <option value="tech">تقنية / هندسية</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-1">برأيك، ما هو التحدي الأخطر في وادي الموت؟</label>
+                                <select id="poll-challenge" class="w-full border border-slate-300 p-2 rounded focus:ring-2 focus:ring-emerald-500 outline-none bg-white" required>
+                                    <option value="" disabled selected>اختر...</option>
+                                    <option value="funding">نفاد السيولة النقدية (التمويل)</option>
+                                    <option value="pmf">عدم ملاءمة المنتج للسوق (PMF)</option>
+                                    <option value="team">تفكك الفريق المؤسس</option>
+                                    <option value="market">التغيرات الاقتصادية المفاجئة</option>
+                                </select>
+                            </div>
+                            <button type="submit" id="submit-poll-btn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded transition-colors shadow-md mt-4 disabled:opacity-50 flex items-center justify-center gap-2">
+                                <span>إرسال رأيي للسحابة 🚀</span>
+                            </button>
+                        </form>
+                        <div id="poll-success-msg" class="hidden mt-4 p-3 bg-green-100 text-green-800 rounded text-sm text-center font-bold border border-green-200">
+                            تم تسجيل رأيك سحابياً! راقب الإحصائيات...
+                        </div>
+                        <div id="poll-error-msg" class="hidden mt-4 p-3 bg-red-100 text-red-800 rounded text-sm text-center font-bold border border-red-200">
+                            خطأ في الاتصال، حاول مجدداً.
+                        </div>
+                    </div>
+
+                    <!-- Live Results Charts -->
+                    <div class="bg-white p-6 rounded-xl border border-slate-200 lg:col-span-2 shadow-sm grid grid-cols-1 md:grid-cols-2 gap-6 relative min-h-[300px]">
+                        
+                        <div class="flex flex-col relative mt-2 md:mt-0">
+                            <h3 class="font-bold text-slate-700 mb-2 text-center text-sm">إجمالي خلفيات الحضور (مباشر)</h3>
+                            <div class="small-chart-container flex-grow relative">
+                                <!-- Empty State Overlay -->
+                                <div id="empty-state-bg" class="absolute inset-0 flex flex-col items-center justify-center bg-white/90 backdrop-blur-sm z-10 rounded transition-opacity duration-300">
+                                    <span class="text-3xl mb-2 opacity-50">📭</span>
+                                    <span class="text-slate-600 font-bold text-sm">في انتظار البيانات...</span>
+                                    <span class="text-slate-400 text-xs mt-1">امسح الكود وكن أول المصوتين</span>
+                                </div>
+                                <canvas id="pollBackgroundChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col relative mt-2 md:mt-0">
+                            <h3 class="font-bold text-slate-700 mb-2 text-center text-sm">التحدي الأكبر وفقاً لإجماع الحضور (مباشر)</h3>
+                            <div class="small-chart-container flex-grow relative">
+                                <!-- Empty State Overlay -->
+                                <div id="empty-state-chal" class="absolute inset-0 flex flex-col items-center justify-center bg-white/90 backdrop-blur-sm z-10 rounded transition-opacity duration-300">
+                                    <span class="text-3xl mb-2 opacity-50">📊</span>
+                                    <span class="text-slate-600 font-bold text-sm">في انتظار البيانات...</span>
+                                    <span class="text-slate-400 text-xs mt-1">امسح الكود وكن أول المصوتين</span>
+                                </div>
+                                <canvas id="pollChallengeChart"></canvas>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Conclusion & Emotional Intelligence -->
+        <section id="conclusion" class="section-content hidden animate-fade-in">
+            <div class="bg-white p-6 md:p-10 rounded-2xl shadow-sm border border-slate-100 mb-8 border-t-4 border-t-purple-600">
+                <div class="flex flex-col md:flex-row items-start gap-8">
+                    <div class="md:w-1/3 bg-purple-50 p-6 rounded-xl border border-purple-100 text-center">
+                        <div class="text-7xl mb-4">🧠❤️</div>
+                        <h3 class="text-2xl font-black text-purple-900 mb-2">الذكاء العاطفي</h3>
+                        <p class="text-purple-700 font-medium mb-4">الأداة غير المرئية في ترسانة رائد الأعمال الناجح</p>
+                        <div class="text-sm text-slate-600 text-right space-y-3">
+                            <p>✔️ امتصاص الصدمات المالية.</p>
+                            <p>✔️ إدارة الفوضى دون نقل التوتر للفريق.</p>
+                            <p>✔️ تحويل الإخفاقات لدروس مستفادة.</p>
+                        </div>
+                    </div>
+                    <div class="md:w-2/3 space-y-5 text-lg leading-relaxed text-slate-700">
+                        <h2 class="text-3xl font-bold text-slate-800 mb-4">الخاتمة: ما وراء الأرقام الصماء</h2>
+                        <p>تُمثّل هذه الخاتمة جسراً يربط بين الأرقام الصماء في الميزانيات وبين النبض الحي في عروق القادة، حيث يتجلى الذكاء العاطفي كأهم الأدوات غير المرئية في ترسانة رائد الأعمال الناجح. إن القدرة على الموازنة بين <strong>"صرامة المحاسب"</strong> و<strong>"خيال المبتكر"</strong> ليست مجرد مهارة إدارية، بل هي نضج نفسي يسمح للقائد بامتصاص صدمات "وادي الموت" المالي دون أن يفقد إيمانه بالرؤية.</p>
+                        <p>إن الذكاء العاطفي هنا هو "الزيت" الذي يمنع تروس الشركة من التآكل تحت ضغط التحديات؛ فهو الذي يمنح المؤسس مرونة "المحورية" (Pivot) عندما يخبره المنطق الإحصائي بضرورة التغيير، وهو الذي يحول "فشل" جولة تمويلية إلى "درس" مستفاد بدلاً من كونه نهاية للطموح.</p>
+                        <div class="bg-slate-800 text-white p-6 rounded-xl mt-6 shadow-lg border-r-4 border-purple-500 italic">
+                            "في نهاية المطاف، الشركات الناشئة لا تقودها الخوارزميات، بل يقودها بشر يتأثرون ويؤثرون، ولذا فإن الاستثمار في "صلابة الروح" و"اتزان النفس" هو الضمانة الحقيقية لاستدامة الدورة الحيوية للشركة."
+                        </div>
+                        <p class="mt-6 font-bold text-slate-800 text-xl">
+                            ختاماً، إن ريادة الأعمال هي رحلة لاكتشاف الذات قبل أن تكون رحلة لبناء الثروات. ومن خلال التكامل بين الانضباط المالي، الكفاءة التشغيلية، والوعي القيادي، تتحول التحديات إلى درجات في سلم المجد، لتثبت أن العقل البشري قادر على تحويل رماد الأزمات إلى منارات للابتكار.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<!-- ========================================== -->
+<!-- --- FIREBASE REALTIME SYNC LOGIC (MODULE) --- -->
+<!-- ========================================== -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, collection, doc, setDoc, onSnapshot, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    let db, auth, currentUser, appId;
+
+    window.submitCloudPoll = async function(e, formEl) {
+        e.preventDefault();
+        
+        if (!currentUser) {
+            document.getElementById('poll-error-msg').innerText = "لم يتم الاتصال بالسحابة بعد، يرجى الانتظار.";
+            document.getElementById('poll-error-msg').classList.remove('hidden');
+            return;
+        }
+
+        const btn = document.getElementById('submit-poll-btn');
+        btn.disabled = true;
+        btn.innerHTML = `<span class="animate-spin">⏳</span> جاري الإرسال...`;
+
+        const bgVal = document.getElementById('poll-background').value;
+        const chalVal = document.getElementById('poll-challenge').value;
+
+        try {
+            const pollDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'audience_polls', currentUser.uid);
+            await setDoc(pollDocRef, { 
+                background: bgVal, 
+                challenge: chalVal,
+                timestamp: Date.now() 
+            });
+
+            btn.innerHTML = "تم تسجيل رأيك سحابياً ✓";
+            document.getElementById('poll-error-msg').classList.add('hidden');
+            const msg = document.getElementById('poll-success-msg');
+            msg.classList.remove('hidden');
+            msg.classList.add('animate-pulse');
+            setTimeout(() => msg.classList.remove('animate-pulse'), 2000);
+            
+            setTimeout(() => {
+                btn.disabled = false;
+                btn.innerHTML = "تحديث رأيي 🔄";
+                msg.classList.add('hidden');
+            }, 3000);
+
+        } catch (error) {
+            console.error("Error saving poll:", error);
+            btn.disabled = false;
+            btn.innerHTML = "إرسال رأيي للسحابة 🚀";
+            document.getElementById('poll-error-msg').innerText = "حدث خطأ أثناء الإرسال.";
+            document.getElementById('poll-error-msg').classList.remove('hidden');
+        }
+    };
+
+    window.confirmReset = async function() {
+        const pwdInput = document.getElementById('admin-password');
+        const pwdError = document.getElementById('pwd-error');
+        const loader = document.getElementById('reset-loader');
+
+        // Secret Password Validation using simple Base64 to hide 'admin2026' from plain sight
+        if(btoa(pwdInput.value) === 'YWRtaW4yMDI2') { 
+            if (!currentUser) return;
+            
+            pwdError.classList.add('hidden');
+            loader.classList.remove('hidden');
+
+            try {
+                const pollsRef = collection(db, 'artifacts', appId, 'public', 'data', 'audience_polls');
+                const snapshot = await getDocs(pollsRef);
+                
+                const deletePromises = [];
+                snapshot.forEach((docSnap) => {
+                    deletePromises.push(deleteDoc(docSnap.ref));
+                });
+                
+                await Promise.all(deletePromises);
+                
+                window.closePwdModal();
+                const btn = document.getElementById('submit-poll-btn');
+                btn.disabled = false;
+                btn.innerHTML = "إرسال رأيي للسحابة 🚀";
+                document.getElementById('poll-success-msg').classList.add('hidden');
+                document.getElementById('audiencePollForm').reset();
+            } catch (error) {
+                console.error("Error resetting data:", error);
+                alert("حدث خطأ أثناء عملية المسح.");
+            } finally {
+                loader.classList.add('hidden');
+            }
+        } else {
+            pwdError.classList.remove('hidden');
+            pwdInput.value = '';
+            pwdInput.focus();
+        }
+    };
+
+    async function initFirebase() {
+        try {
+            const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+            if(!firebaseConfig) {
+                console.log("No Firebase config found. Local mode.");
+                enableGateway();
+                return;
+            }
+
+            const app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+            appId = typeof __app_id !== 'undefined' ? __app_id : 'default-startup-app';
+
+            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                await signInWithCustomToken(auth, __initial_auth_token);
+            } else {
+                await signInAnonymously(auth);
+            }
+
+            onAuthStateChanged(auth, (user) => {
+                currentUser = user;
+                if (user) {
+                    enableGateway();
+                    startLivePollListener();
+                }
+            });
+
+        } catch(e) { 
+            console.error("Firebase init error:", e); 
+            enableGateway();
+        }
+    }
+
+    function enableGateway() {
+        document.getElementById('cloud-sync-status').innerText = "متصل بالسحابة وجاهز للمزامنة! ✅";
+        document.getElementById('cloud-sync-status').classList.remove('animate-pulse');
+        document.getElementById('cloud-sync-status').classList.replace('bg-blue-800/50', 'bg-emerald-800/50');
+        document.getElementById('cloud-sync-status').classList.replace('border-blue-500/30', 'border-emerald-500/30');
+        document.getElementById('cloud-sync-status').classList.replace('text-blue-200', 'text-emerald-200');
+        
+        document.getElementById('btn-enter-fs').disabled = false;
+        document.getElementById('btn-enter-normal').disabled = false;
+    }
+
+    function startLivePollListener() {
+        const pollsRef = collection(db, 'artifacts', appId, 'public', 'data', 'audience_polls');
+        onSnapshot(pollsRef, (snapshot) => {
+            let aggregatedData = {
+                backgrounds: { academic: 0, practical: 0, tech: 0 },
+                challenges: { funding: 0, pmf: 0, team: 0, market: 0 }
+            };
+
+            snapshot.forEach((docSnap) => {
+                const data = docSnap.data();
+                if (data.background && aggregatedData.backgrounds[data.background] !== undefined) {
+                    aggregatedData.backgrounds[data.background]++;
+                }
+                if (data.challenge && aggregatedData.challenges[data.challenge] !== undefined) {
+                    aggregatedData.challenges[data.challenge]++;
+                }
+            });
+
+            if (window.updatePollChartsUI) {
+                window.updatePollChartsUI(aggregatedData);
+            }
+        }, (error) => {
+            console.error("Firestore sync error:", error);
+        });
+    }
+
+    document.getElementById('audiencePollForm').addEventListener('submit', function(e) {
+        window.submitCloudPoll(e, this);
+    });
+
+    initFirebase();
+</script>
+
+<!-- ========================================== -->
+<!-- --- STANDARD UI & CHART LOGIC --- -->
+<!-- ========================================== -->
+<script>
+    // --- ADVANCED FULLSCREEN & IMMERSIVE LOGIC ---
+    window.enterExperience = function(requestFullscreen) {
+        const gateway = document.getElementById('gateway-overlay');
+        if (requestFullscreen) {
+            triggerFullscreen();
+        }
+        gateway.classList.add('opacity-0', 'pointer-events-none');
+        setTimeout(() => gateway.style.display = 'none', 700);
+    };
+
+    window.toggleFullScreen = function() {
+        if (!document.fullscreenElement && !document.webkitIsFullScreen && !document.body.classList.contains('pseudo-fullscreen')) {
+            triggerFullscreen();
+        } else {
+            exitFullscreen();
+        }
+    };
+
+    function triggerFullscreen() {
+        const docElm = document.documentElement;
+        let p;
+        // Try native fullscreen API
+        if (docElm.requestFullscreen) { p = docElm.requestFullscreen(); } 
+        else if (docElm.mozRequestFullScreen) { p = docElm.mozRequestFullScreen(); } 
+        else if (docElm.webkitRequestFullScreen) { p = docElm.webkitRequestFullScreen(); } 
+        else if (docElm.msRequestFullscreen) { p = docElm.msRequestFullscreen(); }
+        
+        // Handle blocked iframe scenarios using Immersive Mode
+        if(p && typeof p.catch === 'function') {
+            p.catch(err => {
+                console.warn("Native Fullscreen blocked by browser/iframe policy. Activating Immersive Mode fallback.");
+                document.body.classList.add('pseudo-fullscreen');
+                updateFullscreenUI(true);
+            });
+        } else {
+            // Backup check for older browsers
+            setTimeout(()=>{
+                if (!document.fullscreenElement && !document.webkitIsFullScreen) {
+                    document.body.classList.add('pseudo-fullscreen');
+                    updateFullscreenUI(true);
+                }
+            }, 200);
+        }
+        updateFullscreenUI(true);
+    }
+
+    function exitFullscreen() {
+        if (document.exitFullscreen) { document.exitFullscreen().catch(()=>{}); } 
+        else if (document.msExitFullscreen) { document.msExitFullscreen(); } 
+        else if (document.mozCancelFullScreen) { document.mozCancelFullScreen(); } 
+        else if (document.webkitExitFullscreen) { document.webkitExitFullscreen(); }
+        
+        document.body.classList.remove('pseudo-fullscreen');
+        updateFullscreenUI(false);
+    }
+
+    function updateFullscreenUI(isFullscreen) {
+        const icon = document.getElementById('fs-icon');
+        const text = document.getElementById('fs-text');
+        if(isFullscreen) { icon.innerText = "✖"; text.innerText = "خروج من ملء الشاشة"; } 
+        else { icon.innerText = "⛶"; text.innerText = "ملء الشاشة"; }
+    }
+
+    // Handle ESC key for Immersive Mode
+    document.addEventListener('keydown', (e) => {
+        if(e.key === 'Escape' && document.body.classList.contains('pseudo-fullscreen')) {
+            exitFullscreen();
+        }
+    });
+
+    // --- Navigation Logic ---
+    const tabs = document.querySelectorAll('.tab-btn');
+    const sections = document.querySelectorAll('.section-content');
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            tabs.forEach(t => {
+                t.classList.remove('active-tab', 'text-blue-700', 'border-blue-700', 'text-emerald-600');
+                t.classList.add('text-slate-500', 'border-transparent');
+            });
+            tab.classList.add('active-tab', 'text-blue-700', 'border-blue-700');
+            tab.classList.remove('text-slate-500', 'border-transparent');
+            const targetId = tab.getAttribute('data-target');
+            sections.forEach(sec => {
+                sec.classList.add('hidden'); sec.classList.remove('block');
+            });
+            document.getElementById(targetId).classList.remove('hidden');
+            document.getElementById(targetId).classList.add('block');
+        });
+    });
+
+    // --- Global Chart Options ---
+    const commonOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { labels: { font: { family: "'Tajawal', sans-serif" } } },
+            tooltip: { titleFont: { family: "'Tajawal', sans-serif" }, bodyFont: { family: "'Tajawal', sans-serif" } }
+        }
+    };
+
+    // --- Overview Charts ---
+    const ctxLine = document.getElementById('deathValleyChart').getContext('2d');
+    new Chart(ctxLine, {
+        type: 'line',
+        data: {
+            labels: ['الفكرة', 'نموذج أولي', 'وادي الموت', 'إيرادات أولية', 'النمو', 'Unicorn'],
+            datasets: [{
+                label: 'التدفق النقدي والإيرادات',
+                data: [0, -20, -60, -10, 40, 90],
+                borderColor: '#dc2626', backgroundColor: 'rgba(220, 38, 38, 0.1)', borderWidth: 3, fill: true, tension: 0.4
+            }]
+        },
+        options: { ...commonOptions, scales: { y: { grid: { color: '#e2e8f0' } }, x: { grid: { display: false } } } }
+    });
+
+    const ctxPie = document.getElementById('startupTypesChart').getContext('2d');
+    new Chart(ctxPie, {
+        type: 'doughnut',
+        data: {
+            labels: ['البرمجيات (SaaS)', 'الاقتصاد التشاركي', 'التكنولوجيا العميقة'],
+            datasets: [{ data: [45, 25, 30], backgroundColor: ['#3b82f6', '#f59e0b', '#10b981'], borderWidth: 0 }]
+        },
+        options: { ...commonOptions, cutout: '65%' }
+    });
+
+    // --- Growth Stages Timeline ---
+    const growthStagesData = [
+        { title: "التأسيس وبناء النموذج", structural: "هيكل مسطح، لا أقسام، سرعة بناء MVP.", financial: "تمويل ذاتي (Bootstrapping).", challenges: "إيجاد التوافق المبدئي." },
+        { title: "وادي الموت (Pre-PMF)", structural: "فرق صغيرة مرنة جداً للتحول الاستراتيجي.", financial: "أعلى معدلات الخطر. حرق نقدي مرتفع.", challenges: "الوصول للتوافق (PMF) قبل نفاد السيولة." },
+        { title: "الإيرادات المبكرة", structural: "بداية الهيكلة الوظيفية، تفويض المهام.", financial: "بدء الإيرادات لتغطية المصروفات.", challenges: "تحويل العملاء لعملاء دائمين وتقليل التكلفة." },
+        { title: "النمو والتوسع", structural: "هيكل هرمي، إدارة وسطى، KPIs صارمة.", financial: "تمويلات ضخمة (Series B & C).", challenges: "الحفاظ على الثقافة أثناء النمو السريع." },
+        { title: "النضوج (Unicorn)", structural: "هيكل مؤسسي معقد، حوكمة الشركات.", financial: "استقرار مالي عالي، استعداد للاكتتاب.", challenges: "تجنب البيروقراطية والابتكار المستمر." }
+    ];
+    window.updateStageDetails = function(index) {
+        const dots = document.querySelectorAll('.stage-dot');
+        dots.forEach((dot, idx) => {
+            if(idx === index) {
+                dot.className = "stage-dot w-14 h-14 rounded-full text-white flex items-center justify-center font-bold text-xl border-4 border-white shadow-md transition-all scale-110 " + 
+                                (index === 0 ? "bg-blue-600" : index === 1 ? "bg-amber-500" : index === 2 ? "bg-emerald-500" : index === 3 ? "bg-blue-500" : "bg-purple-600");
+            } else {
+                dot.className = "stage-dot w-14 h-14 rounded-full bg-slate-300 text-slate-600 flex items-center justify-center font-bold text-xl border-4 border-white shadow-md transition-all";
+            }
+        });
+        const box = document.getElementById('stage-details-box');
+        const data = growthStagesData[index];
+        box.style.opacity = 0;
+        setTimeout(() => {
+            box.innerHTML = `<h3 class="text-2xl font-bold text-blue-900 mb-6 border-b border-slate-200 pb-3">${data.title}</h3><div class="space-y-4"><p><strong>🏢 الهيكل:</strong> ${data.structural}</p><p><strong>💵 المال:</strong> ${data.financial}</p><p><strong>🎯 التحديات:</strong> ${data.challenges}</p></div>`;
+            box.style.opacity = 1;
+        }, 150);
+    };
+    updateStageDetails(0);
+
+    // --- Risk Radar Chart ---
+    const ctxRadar = document.getElementById('riskRadarChart').getContext('2d');
+    new Chart(ctxRadar, {
+        type: 'polarArea',
+        data: {
+            labels: ['البنية التحتية', 'سلاسل التوريد', 'البيئة التنظيمية'],
+            datasets: [{ data: [90, 85, 75], backgroundColor: ['rgba(59, 130, 246, 0.6)', 'rgba(16, 185, 129, 0.6)', 'rgba(245, 158, 11, 0.6)'], borderWidth: 1 }]
+        },
+        options: { ...commonOptions, scales: { r: { ticks: { display: false } } } }
+    });
+    window.updateRiskDetail = function(index) {
+        const desc = ["مخاطر الأنظمة المادية والرقمية لنشر التكنولوجيا.", "مخاطر إنتاج المنتج النهائي والمواد الحيوية.", "اللوائح الفيدرالية والمحلية لنشر التكنولوجيا."];
+        document.getElementById('risk-display-box').innerHTML = desc[index];
+    };
+
+    // --- Challenges Accordion ---
+    const challengesData = [
+        { c: 'نفاد الأموال في التكنولوجيا العميقة', s: 'تنمية مرحلية محكمة وعدم بناء مصانع قبل إثبات الجدوى.' },
+        { c: 'أزمات الاقتصاد الكلي', s: 'حماية المستخدمين أولاً وإجراء تخفيضات هيكلية سريعة.' },
+        { c: 'التشتت', s: 'التركيز المطلق على حالة استخدام واحدة قبل أي توسع.' }
+    ];
+    const accContainer = document.getElementById('challenges-accordion');
+    challengesData.forEach((item, idx) => {
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'border border-slate-200 rounded-xl bg-slate-50';
+        itemDiv.innerHTML = `<button class="w-full px-6 py-4 text-right flex justify-between font-bold text-slate-800" onclick="toggleAccordion(${idx})"><span>❌ ${item.c}</span><span id="icon-acc-${idx}">▼</span></button><div id="content-acc-${idx}" class="hidden px-6 py-4 border-t border-slate-200 text-slate-700">✅ ${item.s}</div>`;
+        accContainer.appendChild(itemDiv);
+    });
+    window.toggleAccordion = function(idx) { document.getElementById(`content-acc-${idx}`).classList.toggle('hidden'); };
+
+    // ==========================================
+    // --- LIVE CHARTS RENDERING & DYNAMIC QR ---
+    // ==========================================
+    
+    let qrTimeout;
+    window.debounceUpdateQR = function() {
+        clearTimeout(qrTimeout);
+        qrTimeout = setTimeout(window.updateQRCode, 500);
+    };
+
+    window.updateQRCode = function() {
+        let url = document.getElementById('public-url-input').value.trim();
+        if(!url) {
+            url = window.location.href; // Fallback
+        }
+        const qrContainer = document.getElementById("qrcode");
+        qrContainer.innerHTML = "";
+        new QRCode(qrContainer, {
+            text: url, 
+            width: 120, height: 120, colorDark : "#0f172a", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.L
+        });
+    };
+
+    // Initialize QR Code with the base URL (ignoring sandbox params if any)
+    setTimeout(() => {
+        const input = document.getElementById('public-url-input');
+        input.value = window.location.origin + window.location.pathname;
+        window.updateQRCode();
+    }, 500);
+
+    // Init Charts (Empty initially)
+    const ctxPollBg = document.getElementById('pollBackgroundChart').getContext('2d');
+    const pollBgChart = new Chart(ctxPollBg, {
+        type: 'doughnut',
+        data: {
+            labels: ['أكاديمية', 'عملية', 'تقنية'],
+            datasets: [{ data: [0,0,0], backgroundColor: ['#8b5cf6', '#3b82f6', '#10b981'], borderWidth: 1, borderColor: '#fff' }]
+        },
+        options: { ...commonOptions, plugins: { legend: { position: 'bottom' } } }
+    });
+
+    const ctxPollChal = document.getElementById('pollChallengeChart').getContext('2d');
+    const pollChalChart = new Chart(ctxPollChal, {
+        type: 'bar',
+        data: {
+            labels: ['التمويل', 'التوافق PMF', 'الفريق', 'الاقتصاد'],
+            datasets: [{ label: 'عدد الأصوات', data: [0,0,0,0], backgroundColor: ['#ef4444', '#f59e0b', '#3b82f6', '#64748b'], borderRadius: 4 }]
+        },
+        options: { 
+            ...commonOptions, plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true, ticks: {stepSize: 1}, grid: { color: '#f1f5f9' } }, x: { grid: { display: false } } }
+        }
+    });
+
+    // Global function called by the Firebase module when cloud data changes
+    window.updatePollChartsUI = function(liveData) {
+        const totalBgs = Object.values(liveData.backgrounds).reduce((a, b) => a + b, 0);
+        const totalChals = Object.values(liveData.challenges).reduce((a, b) => a + b, 0);
+        
+        // Backgrounds Chart Update
+        if(totalBgs === 0) {
+            document.getElementById('empty-state-bg').classList.remove('opacity-0', 'pointer-events-none');
+        } else {
+            document.getElementById('empty-state-bg').classList.add('opacity-0', 'pointer-events-none');
+            pollBgChart.data.datasets[0].data = [liveData.backgrounds.academic, liveData.backgrounds.practical, liveData.backgrounds.tech];
+            pollBgChart.update();
+        }
+
+        // Challenges Chart Update
+        if(totalChals === 0) {
+            document.getElementById('empty-state-chal').classList.remove('opacity-0', 'pointer-events-none');
+        } else {
+            document.getElementById('empty-state-chal').classList.add('opacity-0', 'pointer-events-none');
+            pollChalChart.data.datasets[0].data = [liveData.challenges.funding, liveData.challenges.pmf, liveData.challenges.team, liveData.challenges.market];
+            pollChalChart.update();
+        }
+    };
+
+    // ==========================================
+    // --- RESET PASSWORD MODAL LOGIC ---
+    // ==========================================
+    window.openPwdModal = function() {
+        const pwdModal = document.getElementById('password-modal');
+        const pwdModalContent = document.getElementById('password-modal-content');
+        const pwdInput = document.getElementById('admin-password');
+        const pwdError = document.getElementById('pwd-error');
+        
+        pwdInput.value = '';
+        pwdError.classList.add('hidden');
+        pwdModal.classList.remove('hidden');
+        setTimeout(() => {
+            pwdModal.classList.remove('opacity-0');
+            pwdModalContent.classList.remove('scale-95');
+        }, 10);
+        pwdInput.focus();
+    };
+
+    window.closePwdModal = function() {
+        const pwdModal = document.getElementById('password-modal');
+        const pwdModalContent = document.getElementById('password-modal-content');
+        pwdModal.classList.add('opacity-0');
+        pwdModalContent.classList.add('scale-95');
+        setTimeout(() => {
+            pwdModal.classList.add('hidden');
+        }, 300);
+    };
+
+    document.getElementById('admin-password').addEventListener("keypress", function(event) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            window.confirmReset();
+        }
+    });
+</script>
+</body>
+</html>
