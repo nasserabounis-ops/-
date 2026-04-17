@@ -113,14 +113,30 @@
 <div id="password-modal" class="fixed inset-0 z-[60] bg-slate-900/80 flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
     <div class="bg-white p-6 rounded-2xl shadow-2xl max-w-sm w-full mx-4 transform scale-95 transition-transform duration-300" id="password-modal-content">
         <h3 class="text-xl font-bold text-slate-800 mb-2 flex items-center gap-2"><span>🔒</span> صلاحية المسؤول</h3>
-        <p class="text-slate-500 mb-6 text-sm leading-relaxed">يرجى إدخال كلمة المرور لمسح إحصائيات الجمهور من السحابة.</p>
-        <input type="password" id="admin-password" class="w-full border border-slate-300 rounded-lg p-3 mb-2 focus:ring-2 focus:ring-red-500 outline-none text-left font-sans" placeholder="••••••••" dir="ltr">
+        <p id="pwd-action-desc" class="text-slate-500 mb-6 text-sm leading-relaxed">يرجى إدخال كلمة المرور للمتابعة.</p>
+        <input type="password" id="admin-password" class="w-full border border-slate-300 rounded-lg p-3 mb-2 focus:ring-2 focus:ring-blue-500 outline-none text-left font-sans" placeholder="••••••••" dir="ltr">
         <p id="pwd-error" class="text-red-500 text-xs mb-6 hidden font-bold">❌ كلمة المرور غير صحيحة!</p>
         <div class="flex justify-end gap-3 mt-4">
             <button onclick="closePwdModal()" class="px-5 py-2 text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg font-bold transition-colors">إلغاء</button>
-            <button onclick="confirmReset()" class="px-5 py-2 text-white bg-red-600 hover:bg-red-700 rounded-lg font-bold transition-colors shadow-md flex items-center gap-1">
-                <span id="reset-loader" class="hidden animate-spin">⏳</span> تأكيد المسح 🗑️
+            <button onclick="confirmAdminAction()" id="btn-confirm-admin" class="px-5 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-lg font-bold transition-colors shadow-md flex items-center gap-1">
+                <span id="admin-loader" class="hidden animate-spin">⏳</span> تأكيد
             </button>
+        </div>
+    </div>
+</div>
+
+<!-- 📊 Analysis Result Modal 📊 -->
+<div id="analysis-modal" class="fixed inset-0 z-[70] bg-slate-900/80 flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+    <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-2xl w-full mx-4 transform scale-95 transition-transform duration-300 border-t-8 border-indigo-600 flex flex-col max-h-[90vh]" id="analysis-modal-content">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="text-2xl font-black text-slate-800 flex items-center gap-2"><span>🤖</span> التحليل الاستراتيجي لنتائج الجمهور</h3>
+            <button onclick="closeAnalysisModal()" class="text-slate-400 hover:text-red-500 text-2xl font-bold transition-colors">&times;</button>
+        </div>
+        <div id="analysis-content" class="overflow-y-auto custom-scrollbar pr-2 flex-grow">
+            <!-- سيتم حقن التحليل الذكي هنا بواسطة الجافاسكربت -->
+        </div>
+        <div class="mt-6 pt-4 border-t border-slate-200 flex justify-end">
+            <button onclick="closeAnalysisModal()" class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-bold transition-colors shadow-md">إغلاق وتطوير النقاش</button>
         </div>
     </div>
 </div>
@@ -431,11 +447,25 @@
                             <h2 class="text-2xl font-bold text-slate-900 flex items-center gap-2">
                                 <span class="text-blue-600">📡</span> نبض الجمهور: استطلاع سحابي مباشر
                             </h2>
-                            <button onclick="openPwdModal()" class="bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 px-3 py-1.5 rounded-lg text-sm font-bold flex items-center gap-2 transition-colors shadow-sm hover:shadow focus:outline-none">
-                                <span>🗑️</span> مسح البيانات (إدارة)
-                            </button>
+                            <div class="flex gap-2">
+                                <button onclick="openPwdModal('analyze')" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 px-3 py-1.5 rounded-lg text-sm font-bold flex items-center gap-2 transition-colors shadow-sm hover:shadow focus:outline-none">
+                                    <span>📊</span> تحليل النتائج (إدارة)
+                                </button>
+                                <button onclick="openPwdModal('reset')" class="bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 px-3 py-1.5 rounded-lg text-sm font-bold flex items-center gap-2 transition-colors shadow-sm hover:shadow focus:outline-none">
+                                    <span>🗑️</span> مسح البيانات (إدارة)
+                                </button>
+                            </div>
                         </div>
-                        <p class="text-slate-600 text-lg leading-relaxed font-medium">شارك برأيك الآن. يتم تجميع وتحليل إجابات الحضور وعرضها بشكل لحظي لمحاكاة التفاعل الحي والذكي في العروض التقديمية.</p>
+                        
+                        <div class="bg-blue-50 border border-blue-100 p-4 rounded-lg mb-4 mt-2">
+                            <h4 class="font-bold text-blue-900 mb-2">🎯 الغرض من الاستطلاع وكيفية المشاركة:</h4>
+                            <p class="text-slate-700 text-sm leading-relaxed mb-2">يهدف هذا التقييم إلى قياس مدى ارتباط محتوى الجلسة بواقعكم المهني، وتحديد <strong>الفجوات الاستراتيجية</strong> في شركاتكم أو المؤسسات التي تعملون بها. بفضل تنوع خبراتكم (عملية وعلمية)، ستساعدنا هذه البيانات في توجيه النقاش الختامي نحو حلول مخصصة تعكس احتياجات الأغلبية.</p>
+                            <ul class="text-slate-600 text-sm list-disc pr-5 space-y-1 font-medium">
+                                <li><strong>كيف أشارك؟</strong> امسح رمز الـ QR بهاتفك أو ادخل عبر الرابط المرفق جانبًا.</li>
+                                <li><strong>ماذا يحدث؟</strong> سيتم تحديث 4 رسوم بيانية في الأسفل لحظياً بمجرد تصويتك.</li>
+                                <li><strong>في النهاية:</strong> سيقوم المحاضر بتوليد تحليل استراتيجي ذكي يربط بين المتغيرات الأربعة لختام الجلسة.</li>
+                            </ul>
+                        </div>
                     </div>
                     
                     <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl flex flex-row items-center gap-4 shadow-sm w-full xl:w-auto card-hover shrink-0">
@@ -451,27 +481,48 @@
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <!-- Voting Form -->
-                    <div class="bg-blue-50 p-6 rounded-xl border border-blue-200 lg:col-span-1 shadow-inner relative card-hover">
-                        <h3 class="font-bold text-blue-900 mb-4 text-lg border-b border-blue-200 pb-2">صوّت الآن</h3>
+                    <!-- Voting Form (Comprehensive) -->
+                    <div class="bg-blue-50 p-6 rounded-xl border border-blue-200 lg:col-span-1 shadow-inner relative card-hover max-h-[600px] overflow-y-auto custom-scrollbar">
+                        <h3 class="font-bold text-blue-900 mb-4 text-lg border-b border-blue-200 pb-2">قياس الواقع الاستراتيجي</h3>
                         <form id="audiencePollForm" class="space-y-4">
                             <div>
-                                <label class="block text-sm font-bold text-slate-700 mb-1">ما هي مرحلة شركتك/فكرتك الحالية؟</label>
-                                <select id="poll-stage" class="w-full border border-slate-300 p-2 rounded focus:ring-2 focus:ring-blue-500 outline-none bg-white" required>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">1. ما هي خلفيتك المهنية الحالية؟</label>
+                                <select id="poll-role" class="w-full border border-slate-300 p-2 rounded text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white" required>
                                     <option value="" disabled selected>اختر...</option>
-                                    <option value="idea">مجرد فكرة (Ideation)</option>
-                                    <option value="seed">مرحلة التأسيس (Seed)</option>
-                                    <option value="growth">النمو والإيرادات (Growth)</option>
+                                    <option value="founder">مؤسس / رائد أعمال</option>
+                                    <option value="corporate">موظف / مدير في شركة قائمة</option>
+                                    <option value="academic">أكاديمي / طالب</option>
+                                    <option value="investor">مستشار / مستثمر / داعم</option>
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-bold text-slate-700 mb-1">ما هو التحدي الأكبر لرواد الأعمال محلياً؟</label>
-                                <select id="poll-main-risk" class="w-full border border-slate-300 p-2 rounded focus:ring-2 focus:ring-blue-500 outline-none bg-white" required>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">2. ما هي مرحلة المؤسسة/المشروع الذي تنتمي إليه؟</label>
+                                <select id="poll-stage" class="w-full border border-slate-300 p-2 rounded text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white" required>
                                     <option value="" disabled selected>اختر...</option>
-                                    <option value="fund">نقص التمويل الجريء</option>
-                                    <option value="talent">جذب الكفاءات والحفاظ عليها</option>
-                                    <option value="reg">البيئة التشريعية والتنظيمية</option>
-                                    <option value="market">حجم السوق والمنافسة</option>
+                                    <option value="idea">فكرة / تحقق مبدئي (Validation)</option>
+                                    <option value="seed">تأسيس وانطلاق (Seed/Early)</option>
+                                    <option value="growth">توسع ونمو سريع (Scaling)</option>
+                                    <option value="mature">مؤسسة ناضجة / كبرى (Mature)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">3. بناءً على الجلسة، ما هو الخطر الداخلي الأكبر لديكم؟</label>
+                                <select id="poll-risk" class="w-full border border-slate-300 p-2 rounded text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white" required>
+                                    <option value="" disabled selected>اختر...</option>
+                                    <option value="premature">التوسع المتهور قبل الملاءمة للسوق</option>
+                                    <option value="micromanagement">متلازمة المؤسس والإدارة المركزية</option>
+                                    <option value="cashflow">معدل حرق النقد وسوء الإدارة المالية</option>
+                                    <option value="bureaucracy">البيروقراطية وبطء الابتكار</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">4. ما هو الإطار (Framework) الذي ستطبقه غداً؟</label>
+                                <select id="poll-action" class="w-full border border-slate-300 p-2 rounded text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white" required>
+                                    <option value="" disabled selected>اختر...</option>
+                                    <option value="agile">المرونة (Agile) والمحورية (Pivot)</option>
+                                    <option value="validated">حلقة التعلم الموثق (Build-Measure-Learn)</option>
+                                    <option value="finance">الرقابة الصارمة على التدفق النقدي والمدرج</option>
+                                    <option value="eq">الذكاء العاطفي وتفويض الصلاحيات</option>
                                 </select>
                             </div>
                             <button type="submit" id="submit-poll-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded transition-colors shadow-md mt-4 flex items-center justify-center gap-2">
@@ -479,36 +530,56 @@
                             </button>
                         </form>
                         <div id="poll-success-msg" class="hidden mt-4 p-3 bg-green-100 text-green-800 rounded text-sm text-center font-bold border border-green-200">
-                            تم تسجيل رأيك بنجاح!
+                            تم تسجيل التقييم بنجاح!
                         </div>
                         <div id="poll-error-msg" class="hidden mt-4 p-3 bg-red-100 text-red-800 rounded text-sm text-center font-bold border border-red-200">
                             خطأ في الاتصال.
                         </div>
                     </div>
 
-                    <!-- Live Charts -->
-                    <div class="bg-white p-6 rounded-xl border border-slate-200 lg:col-span-2 shadow-sm grid grid-cols-1 md:grid-cols-2 gap-6 relative min-h-[300px]">
+                    <!-- Live Charts (4 Data Points) -->
+                    <div class="bg-white p-6 rounded-xl border border-slate-200 lg:col-span-2 shadow-sm grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-8 relative min-h-[450px]">
+                        
                         <div class="flex flex-col relative">
-                            <h3 class="font-bold text-slate-700 mb-2 text-center text-sm">مراحل شركات الحضور</h3>
-                            <div class="small-chart-container flex-grow relative">
-                                <div id="empty-state-stage" class="absolute inset-0 flex flex-col items-center justify-center bg-white/90 backdrop-blur-sm z-10 rounded transition-opacity duration-300">
-                                    <span class="text-3xl mb-2 opacity-50">⏳</span>
-                                    <span class="text-slate-600 font-bold text-sm">في انتظار البيانات...</span>
+                            <h3 class="font-bold text-slate-700 mb-2 text-center text-xs">1. تركيبة الحضور المهنية</h3>
+                            <div class="small-chart-container flex-grow relative" style="height: 180px;">
+                                <div id="empty-state-1" class="absolute inset-0 flex flex-col items-center justify-center bg-white/90 backdrop-blur-sm z-10 rounded transition-opacity duration-300">
+                                    <span class="text-2xl mb-1 opacity-50">👥</span>
+                                </div>
+                                <canvas id="pollRoleChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col relative">
+                            <h3 class="font-bold text-slate-700 mb-2 text-center text-xs">2. نضج المؤسسات</h3>
+                            <div class="small-chart-container flex-grow relative" style="height: 180px;">
+                                <div id="empty-state-2" class="absolute inset-0 flex flex-col items-center justify-center bg-white/90 backdrop-blur-sm z-10 rounded transition-opacity duration-300">
+                                    <span class="text-2xl mb-1 opacity-50">📈</span>
                                 </div>
                                 <canvas id="pollStageChart"></canvas>
                             </div>
                         </div>
 
                         <div class="flex flex-col relative">
-                            <h3 class="font-bold text-slate-700 mb-2 text-center text-sm">التحدي الأكبر (حسب التصويت)</h3>
-                            <div class="small-chart-container flex-grow relative">
-                                <div id="empty-state-risk" class="absolute inset-0 flex flex-col items-center justify-center bg-white/90 backdrop-blur-sm z-10 rounded transition-opacity duration-300">
-                                    <span class="text-3xl mb-2 opacity-50">📊</span>
-                                    <span class="text-slate-600 font-bold text-sm">في انتظار البيانات...</span>
+                            <h3 class="font-bold text-slate-700 mb-2 text-center text-xs">3. الخطر الداخلي الأبرز</h3>
+                            <div class="small-chart-container flex-grow relative" style="height: 180px;">
+                                <div id="empty-state-3" class="absolute inset-0 flex flex-col items-center justify-center bg-white/90 backdrop-blur-sm z-10 rounded transition-opacity duration-300">
+                                    <span class="text-2xl mb-1 opacity-50">⚠️</span>
                                 </div>
                                 <canvas id="pollRiskChart"></canvas>
                             </div>
                         </div>
+
+                        <div class="flex flex-col relative">
+                            <h3 class="font-bold text-slate-700 mb-2 text-center text-xs">4. الإجراء العملي المفضل</h3>
+                            <div class="small-chart-container flex-grow relative" style="height: 180px;">
+                                <div id="empty-state-4" class="absolute inset-0 flex flex-col items-center justify-center bg-white/90 backdrop-blur-sm z-10 rounded transition-opacity duration-300">
+                                    <span class="text-2xl mb-1 opacity-50">🛠️</span>
+                                </div>
+                                <canvas id="pollActionChart"></canvas>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -554,9 +625,18 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, collection, doc, setDoc, onSnapshot, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    // قمنا بإضافة addDoc هنا لتمكين الإضافة التراكمية
+    import { getFirestore, collection, doc, setDoc, addDoc, onSnapshot, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-    const GITHUB_FIREBASE_CONFIG = null; 
+    const LOCAL_FIREBASE_CONFIG = {
+      apiKey: "AIzaSyDkh7FweJVshW2jRO4I8rWuxDHH3RHl0Zk",
+      authDomain: "entrepreneurship-ef778.firebaseapp.com",
+      projectId: "entrepreneurship-ef778",
+      storageBucket: "entrepreneurship-ef778.firebasestorage.app",
+      messagingSenderId: "31220141473",
+      appId: "1:31220141473:web:c07143f4fecf7e67c14fe0",
+      measurementId: "G-FC8B08RPKX"
+    };
 
     let db, auth, currentUser, appId;
 
@@ -574,14 +654,20 @@
         btn.disabled = true;
         btn.innerHTML = `<span class="animate-spin">⏳</span> جاري الإرسال...`;
 
+        const roleVal = document.getElementById('poll-role').value;
         const stageVal = document.getElementById('poll-stage').value;
-        const riskVal = document.getElementById('poll-main-risk').value;
+        const riskVal = document.getElementById('poll-risk').value;
+        const actionVal = document.getElementById('poll-action').value;
 
         try {
-            const pollDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'startup_polls', currentUser.uid);
-            await setDoc(pollDocRef, { 
+            // التعديل هنا: استخدام addDoc بدلاً من setDoc لضمان إضافة السجلات وعدم الكتابة فوقها أبداً
+            const pollsCollectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'startup_polls');
+            await addDoc(pollsCollectionRef, { 
+                role: roleVal,
                 stage: stageVal, 
-                mainRisk: riskVal,
+                risk: riskVal,
+                action: actionVal,
+                userId: currentUser.uid, // نحتفظ بمعرف المستخدم لغرض التوثيق فقط
                 timestamp: Date.now() 
             });
 
@@ -592,7 +678,7 @@
             
             setTimeout(() => {
                 btn.disabled = false;
-                btn.innerHTML = "تحديث التصويت 🔄";
+                btn.innerHTML = "إرسال تصويت آخر 🔄"; // تم تغيير النص لتوضيح إمكانية التصويت التراكمي
                 msg.classList.add('hidden');
             }, 3000);
 
@@ -606,53 +692,35 @@
         }
     };
 
-    window.confirmReset = async function() {
-        const pwdInput = document.getElementById('admin-password');
-        const pwdError = document.getElementById('pwd-error');
-        const loader = document.getElementById('reset-loader');
-
-        // admin2026
-        if(btoa(pwdInput.value) === 'YWRtaW4yMDI2') { 
-            if (!currentUser) return alert("السحابة غير متصلة!");
+    window.executeCloudReset = async function() {
+        try {
+            const pollsRef = collection(db, 'artifacts', appId, 'public', 'data', 'startup_polls');
+            const snapshot = await getDocs(pollsRef);
+            const deletePromises = [];
+            snapshot.forEach((docSnap) => deletePromises.push(deleteDoc(docSnap.ref)));
+            await Promise.all(deletePromises);
             
-            pwdError.classList.add('hidden');
-            loader.classList.remove('hidden');
-
-            try {
-                const pollsRef = collection(db, 'artifacts', appId, 'public', 'data', 'startup_polls');
-                const snapshot = await getDocs(pollsRef);
-                const deletePromises = [];
-                snapshot.forEach((docSnap) => deletePromises.push(deleteDoc(docSnap.ref)));
-                await Promise.all(deletePromises);
-                
-                window.closePwdModal();
-                document.getElementById('audiencePollForm').reset();
-            } catch (error) {
-                alert("خطأ أثناء المسح.");
-            } finally {
-                loader.classList.add('hidden');
-            }
-        } else {
-            pwdError.classList.remove('hidden');
-            pwdInput.value = ''; pwdInput.focus();
+            document.getElementById('audiencePollForm').reset();
+            return true;
+        } catch (error) {
+            console.error(error);
+            alert("خطأ أثناء المسح.");
+            return false;
         }
     };
 
     async function initFirebase() {
         try {
-            let firebaseConfig = GITHUB_FIREBASE_CONFIG;
-            if (!firebaseConfig && typeof __firebase_config !== 'undefined') {
-                firebaseConfig = JSON.parse(__firebase_config);
-            }
+            let firebaseConfig;
 
-            if(!firebaseConfig) {
-                const statusDiv = document.getElementById('cloud-sync-status');
-                statusDiv.innerHTML = "⚠️ وضع عدم الاتصال: يرجى إضافة إعدادات Firebase لعمل المزامنة.";
-                statusDiv.classList.replace('bg-blue-800/50', 'bg-slate-700/80');
-                statusDiv.classList.remove('animate-pulse');
-                document.getElementById('btn-enter-fs').disabled = false;
-                document.getElementById('btn-enter-normal').disabled = false;
-                return;
+            if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+                firebaseConfig = JSON.parse(__firebase_config);
+            } 
+            else if (LOCAL_FIREBASE_CONFIG && LOCAL_FIREBASE_CONFIG.apiKey) {
+                firebaseConfig = LOCAL_FIREBASE_CONFIG;
+            } 
+            else {
+                throw new Error("No Firebase configuration found.");
             }
 
             const app = initializeApp(firebaseConfig);
@@ -660,7 +728,7 @@
             db = getFirestore(app);
             appId = typeof __app_id !== 'undefined' ? __app_id : 'startup-lifecycle-app';
 
-            if (!GITHUB_FIREBASE_CONFIG && typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                 await signInWithCustomToken(auth, __initial_auth_token);
             } else {
                 await signInAnonymously(auth);
@@ -674,6 +742,12 @@
                 }
             });
         } catch(e) { 
+            console.warn("Firebase Init fallback/Offline mode activated:", e);
+            const statusDiv = document.getElementById('cloud-sync-status');
+            statusDiv.innerHTML = "⚠️ وضع عدم الاتصال: يرجى إضافة إعدادات Firebase لعمل المزامنة.";
+            statusDiv.classList.replace('bg-blue-800/50', 'bg-slate-700/80');
+            statusDiv.classList.remove('animate-pulse');
+            document.getElementById('btn-enter-fs').disabled = false;
             document.getElementById('btn-enter-normal').disabled = false;
         }
     }
@@ -691,17 +765,24 @@
         const pollsRef = collection(db, 'artifacts', appId, 'public', 'data', 'startup_polls');
         onSnapshot(pollsRef, (snapshot) => {
             let data = {
-                stages: { idea: 0, seed: 0, growth: 0 },
-                risks: { fund: 0, talent: 0, reg: 0, market: 0 }
+                roles: { founder: 0, corporate: 0, academic: 0, investor: 0 },
+                stages: { idea: 0, seed: 0, growth: 0, mature: 0 },
+                risks: { premature: 0, micromanagement: 0, cashflow: 0, bureaucracy: 0 },
+                actions: { agile: 0, validated: 0, finance: 0, eq: 0 }
             };
 
             snapshot.forEach((docSnap) => {
                 const d = docSnap.data();
+                if (d.role && data.roles[d.role] !== undefined) data.roles[d.role]++;
                 if (d.stage && data.stages[d.stage] !== undefined) data.stages[d.stage]++;
-                if (d.mainRisk && data.risks[d.mainRisk] !== undefined) data.risks[d.mainRisk]++;
+                if (d.risk && data.risks[d.risk] !== undefined) data.risks[d.risk]++;
+                if (d.action && data.actions[d.action] !== undefined) data.actions[d.action]++;
             });
 
+            window.currentPollData = data; 
             if (window.updatePollChartsUI) window.updatePollChartsUI(data);
+        }, (error) => {
+            console.error("خطأ في قراءة الاستطلاعات المباشرة:", error);
         });
     }
 
@@ -892,50 +973,209 @@
         accRisk.innerHTML += `<div class="border border-slate-200 rounded-xl bg-slate-50 overflow-hidden"><button class="w-full px-5 py-4 text-right flex justify-between items-center font-bold text-slate-800 bg-slate-100 hover:bg-slate-200 transition-colors" onclick="document.getElementById('r-content-${idx}').classList.toggle('hidden')"><span class="flex items-center gap-2 text-base md:text-lg">⚠️ ${item.r}</span><span class="text-slate-400 text-sm whitespace-nowrap mr-2">تفاصيل ▼</span></button><div id="r-content-${idx}" class="hidden px-6 py-5 border-t border-slate-200 text-sm md:text-base text-slate-700 bg-white leading-relaxed"><strong class="text-slate-800 bg-slate-100 px-2 py-1 rounded inline-block mb-2">✅ استراتيجية التخفيف والحل:</strong><br><span class="block">${item.m}</span></div></div>`;
     });
 
-    // --- Poll & QR ---
+    // --- Poll & QR Fix ---
     let qrTimeout;
     window.debounceUpdateQR = () => { clearTimeout(qrTimeout); qrTimeout = setTimeout(window.updateQRCode, 500); };
     window.updateQRCode = () => {
-        let url = document.getElementById('public-url-input').value.trim() || window.location.href;
+        let url = document.getElementById('public-url-input').value.trim();
+        // Fallback in case the user deletes the text entirely
+        if(!url) url = "https://example.com/your-app"; 
+        
         document.getElementById("qrcode").innerHTML = "";
-        new QRCode(document.getElementById("qrcode"), { text: url, width: 120, height: 120, colorDark: "#0f172a", colorLight: "#ffffff" });
+        try {
+            new QRCode(document.getElementById("qrcode"), { text: url, width: 120, height: 120, colorDark: "#0f172a", colorLight: "#ffffff" });
+        } catch(e) {
+            console.error("QR Code Error:", e);
+        }
     };
-    setTimeout(() => { document.getElementById('public-url-input').value = window.location.href; window.updateQRCode(); }, 500);
+    setTimeout(() => { 
+        let initialUrl = window.location.href;
+        
+        // إصلاح لمشكلة الروابط الطويلة أو المؤقتة (Blob URLs) التي تمنع الـ QR من العمل بشكل صحيح
+        if(initialUrl.startsWith('blob:') || initialUrl.includes('usercontent.goog')) {
+            initialUrl = "https://your-github-username.github.io/repo-name/"; 
+        }
+        
+        document.getElementById('public-url-input').value = initialUrl; 
+        window.updateQRCode(); 
+    }, 500);
 
-    const chartPollStage = new Chart(document.getElementById('pollStageChart').getContext('2d'), {
+    const chartRole = new Chart(document.getElementById('pollRoleChart').getContext('2d'), {
         type: 'doughnut',
-        data: { labels: ['أفكار', 'تأسيس', 'نمو'], datasets: [{ data: [0,0,0], backgroundColor: ['#f59e0b', '#3b82f6', '#10b981'] }] },
-        options: { ...commonOptions, plugins: { legend: { position: 'bottom' } } }
+        data: { labels: ['مؤسسون', 'شركات', 'أكاديميون', 'مستشارون'], datasets: [{ data: [0,0,0,0], backgroundColor: ['#8b5cf6', '#3b82f6', '#10b981', '#f59e0b'], borderWidth: 0 }] },
+        options: { ...commonOptions, plugins: { legend: { position: 'right', labels: { boxWidth: 10, font: {size: 10} } } } }
     });
-    const chartPollRisk = new Chart(document.getElementById('pollRiskChart').getContext('2d'), {
+    
+    const chartStage = new Chart(document.getElementById('pollStageChart').getContext('2d'), {
         type: 'bar',
-        data: { labels: ['تمويل', 'مواهب', 'قوانين', 'سوق'], datasets: [{ data: [0,0,0,0], backgroundColor: '#3b82f6', borderRadius: 4 }] },
-        options: { ...commonOptions, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: {stepSize:1} }, x: { grid: { display: false } } } }
+        data: { labels: ['فكرة', 'تأسيس', 'توسع', 'نضج'], datasets: [{ data: [0,0,0,0], backgroundColor: '#3b82f6', borderRadius: 4 }] },
+        options: { ...commonOptions, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: {stepSize:1} }, x: { ticks: {font: {size: 10}} } } }
+    });
+
+    const chartRisk = new Chart(document.getElementById('pollRiskChart').getContext('2d'), {
+        type: 'doughnut',
+        data: { labels: ['توسع مبكر', 'مركزية', 'سيولة', 'بيروقراطية'], datasets: [{ data: [0,0,0,0], backgroundColor: ['#ef4444', '#f97316', '#eab308', '#64748b'], borderWidth: 0 }] },
+        options: { ...commonOptions, plugins: { legend: { position: 'right', labels: { boxWidth: 10, font: {size: 10} } } } }
+    });
+
+    const chartAction = new Chart(document.getElementById('pollActionChart').getContext('2d'), {
+        type: 'bar',
+        data: { labels: ['مرونة', 'تعلم', 'مالية', 'ذكاء عاطفي'], datasets: [{ data: [0,0,0,0], backgroundColor: '#10b981', borderRadius: 4 }] },
+        options: { ...commonOptions, indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, ticks: {stepSize:1} }, y: { ticks: {font: {size: 10}} } } }
     });
 
     window.updatePollChartsUI = function(data) {
-        const sumStages = Object.values(data.stages).reduce((a,b)=>a+b,0);
-        const sumRisks = Object.values(data.risks).reduce((a,b)=>a+b,0);
+        const total = Object.values(data.roles).reduce((a,b)=>a+b,0);
+        
+        [1,2,3,4].forEach(i => {
+            const el = document.getElementById(`empty-state-${i}`);
+            if(total === 0) el.classList.remove('opacity-0', 'pointer-events-none');
+            else el.classList.add('opacity-0', 'pointer-events-none');
+        });
 
-        if(sumStages === 0) document.getElementById('empty-state-stage').classList.remove('opacity-0', 'pointer-events-none');
-        else {
-            document.getElementById('empty-state-stage').classList.add('opacity-0', 'pointer-events-none');
-            chartPollStage.data.datasets[0].data = [data.stages.idea, data.stages.seed, data.stages.growth];
-            chartPollStage.update();
-        }
-
-        if(sumRisks === 0) document.getElementById('empty-state-risk').classList.remove('opacity-0', 'pointer-events-none');
-        else {
-            document.getElementById('empty-state-risk').classList.add('opacity-0', 'pointer-events-none');
-            chartPollRisk.data.datasets[0].data = [data.risks.fund, data.risks.talent, data.risks.reg, data.risks.market];
-            chartPollRisk.update();
+        if(total > 0) {
+            chartRole.data.datasets[0].data = [data.roles.founder, data.roles.corporate, data.roles.academic, data.roles.investor];
+            chartRole.update();
+            
+            chartStage.data.datasets[0].data = [data.stages.idea, data.stages.seed, data.stages.growth, data.stages.mature];
+            chartStage.update();
+            
+            chartRisk.data.datasets[0].data = [data.risks.premature, data.risks.micromanagement, data.risks.cashflow, data.risks.bureaucracy];
+            chartRisk.update();
+            
+            chartAction.data.datasets[0].data = [data.actions.agile, data.actions.validated, data.actions.finance, data.actions.eq];
+            chartAction.update();
         }
     };
 
-    // --- Admin Modal ---
-    window.openPwdModal = () => { document.getElementById('password-modal').classList.remove('hidden', 'opacity-0'); document.getElementById('password-modal-content').classList.remove('scale-95'); document.getElementById('admin-password').focus(); };
-    window.closePwdModal = () => { document.getElementById('password-modal').classList.add('opacity-0'); document.getElementById('password-modal-content').classList.add('scale-95'); setTimeout(() => document.getElementById('password-modal').classList.add('hidden'), 300); };
-    document.getElementById('admin-password').addEventListener("keypress", (e) => { if(e.key==="Enter") window.confirmReset(); });
+    // --- Admin & Analysis Logic ---
+    let pendingAdminAction = null;
+    
+    window.openPwdModal = (action) => { 
+        pendingAdminAction = action;
+        const desc = document.getElementById('pwd-action-desc');
+        const btnConfirm = document.getElementById('btn-confirm-admin');
+        
+        if(action === 'reset') {
+            desc.innerText = "أدخل كلمة المرور لمسح جميع إحصائيات الجمهور نهائياً.";
+            btnConfirm.className = "px-5 py-2 text-white bg-red-600 hover:bg-red-700 rounded-lg font-bold transition-colors shadow-md flex items-center gap-1";
+            btnConfirm.innerHTML = '<span id="admin-loader" class="hidden animate-spin">⏳</span> مسح البيانات 🗑️';
+        } else if (action === 'analyze') {
+            desc.innerText = "أدخل كلمة المرور لإنشاء التحليل الاستراتيجي للنتائج.";
+            btnConfirm.className = "px-5 py-2 text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg font-bold transition-colors shadow-md flex items-center gap-1";
+            btnConfirm.innerHTML = '<span id="admin-loader" class="hidden animate-spin">⏳</span> تحليل النتائج 📊';
+        }
+
+        document.getElementById('password-modal').classList.remove('hidden', 'opacity-0'); 
+        document.getElementById('password-modal-content').classList.remove('scale-95'); 
+        document.getElementById('admin-password').value = '';
+        document.getElementById('pwd-error').classList.add('hidden');
+        document.getElementById('admin-password').focus(); 
+    };
+    
+    window.closePwdModal = () => { 
+        document.getElementById('password-modal').classList.add('opacity-0'); 
+        document.getElementById('password-modal-content').classList.add('scale-95'); 
+        setTimeout(() => document.getElementById('password-modal').classList.add('hidden'), 300); 
+        pendingAdminAction = null;
+    };
+
+    window.confirmAdminAction = async () => {
+        const pwdInput = document.getElementById('admin-password');
+        const pwdError = document.getElementById('pwd-error');
+        const loader = document.getElementById('admin-loader');
+
+        if(pwdInput.value === 'admin2026') { 
+            pwdError.classList.add('hidden');
+            loader.classList.remove('hidden');
+
+            if (pendingAdminAction === 'reset') {
+                if(window.executeCloudReset) await window.executeCloudReset();
+            } else if (pendingAdminAction === 'analyze') {
+                generateAndShowAnalysis();
+            }
+            
+            loader.classList.add('hidden');
+            window.closePwdModal();
+        } else {
+            pwdError.classList.remove('hidden');
+            pwdInput.value = ''; pwdInput.focus();
+        }
+    };
+
+    document.getElementById('admin-password').addEventListener("keypress", (e) => { 
+        if(e.key==="Enter") window.confirmAdminAction(); 
+    });
+
+    window.closeAnalysisModal = () => {
+        document.getElementById('analysis-modal').classList.add('opacity-0'); 
+        document.getElementById('analysis-modal-content').classList.add('scale-95'); 
+        setTimeout(() => document.getElementById('analysis-modal').classList.add('hidden'), 300); 
+    };
+
+    function generateAndShowAnalysis() {
+        const data = window.currentPollData || { roles: {}, stages: {}, risks: {}, actions: {} };
+        const totalVotes = Object.values(data.roles).reduce((a,b) => a+b, 0) || 0;
+        const contentDiv = document.getElementById('analysis-content');
+        
+        if (totalVotes === 0) {
+            contentDiv.innerHTML = `<div class="p-4 bg-amber-50 text-amber-800 rounded-lg text-center font-bold">لا توجد أصوات مسجلة حتى الآن لتحليلها. يرجى دعوة الجمهور للتصويت أولاً عبر الرابط.</div>`;
+        } else {
+            const getMax = (obj) => Object.keys(obj).reduce((a,b) => obj[a] > obj[b] ? a : b);
+            
+            const maxRole = getMax(data.roles);
+            const maxStage = getMax(data.stages);
+            const maxRisk = getMax(data.risks);
+            const maxAction = getMax(data.actions);
+            
+            const tRoles = { founder: "مؤسسون ورواد أعمال", corporate: "موظفو شركات ومؤسسات", academic: "أكاديميون وطلاب", investor: "مستشارون ومستثمرون" };
+            const tStages = { idea: "مرحلة الفكرة والتحقق", seed: "مرحلة التأسيس", growth: "مرحلة التوسع والنمو", mature: "مرحلة النضج المؤسسي" };
+            const tRisks = { premature: "التوسع المبكر والمتهور", micromanagement: "الإدارة المركزية (متلازمة المؤسس)", cashflow: "سوء إدارة التدفق النقدي", bureaucracy: "البيروقراطية وغياب الابتكار" };
+            const tActions = { agile: "منهجية المرونة والمحورية", validated: "التعلم الموثق", finance: "الانضباط المالي", eq: "الذكاء العاطفي القيادي" };
+            
+            let insights = `<div class="space-y-4">
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex justify-between items-center">
+                    <div>
+                        <p class="text-slate-600 font-bold mb-1">إجمالي العينة:</p>
+                        <p class="text-3xl font-black text-indigo-600">${totalVotes} <span class="text-sm text-slate-500 font-medium">مشارك</span></p>
+                    </div>
+                    <div class="text-left">
+                        <p class="text-xs text-slate-500 font-bold">الشريحة الغالبة</p>
+                        <p class="text-lg font-bold text-slate-800">${tRoles[maxRole]}</p>
+                    </div>
+                </div>
+                
+                <h4 class="font-bold text-slate-800 text-lg border-b pb-2 mt-4 flex items-center gap-2"><span class="text-indigo-500">🔬</span> تشخيص الحالة (Diagnosis)</h4>
+                <ul class="space-y-3 text-slate-700 leading-relaxed text-sm">
+                    <li><strong class="text-slate-900">سياق البيئة:</strong> الأغلبية ينتمون إلى <strong>${tStages[maxStage]}</strong>، مما يشير إلى أن النقاش يجب أن يركز على تحديات هذه المرحلة لتوفير أقصى فائدة ملموسة للحضور.</li>
+                    <li><strong class="text-slate-900">التهديد الداخلي الأبرز:</strong> يعتقد الحضور أن <strong>${tRisks[maxRisk]}</strong> هو العائق الرئيسي لنجاح كياناتهم بناءً على ما طرحناه اليوم.</li>
+                    <li><strong class="text-slate-900">توجه الحلول:</strong> يميل الجمهور بشكل كبير إلى تطبيق <strong>${tActions[maxAction]}</strong> كخطوة تصحيحية فورية.</li>
+                </ul>
+
+                <h4 class="font-bold text-slate-800 text-lg border-b pb-2 mt-6 flex items-center gap-2"><span class="text-indigo-500">💡</span> التوصية الاستراتيجية الذكية (Prescription)</h4>
+                <div class="bg-indigo-50 p-5 rounded-xl border-r-4 border-indigo-600 text-slate-800 leading-relaxed text-sm font-medium">`;
+            
+            if (maxRole === 'corporate' && maxRisk === 'bureaucracy') {
+                insights += `بما أن الأغلبية من خلفية الشركات القائمة ويشتكون من البيروقراطية، فإن النصيحة الاستراتيجية هي: <strong>تبني ريادة الأعمال الداخلية (Intrapreneurship).</strong> المؤسسات الكبرى لا يمكنها التحرك بسرعة الشركات الناشئة، لكن يمكنها خلق "وحدات ابتكار مستقلة" (Skunkworks) تُمنح ميزانية وصلاحيات لاتخاذ قرارات سريعة وتجربة أفكار مجنونة دون الخضوع للروتين المؤسسي الخانق.`;
+            } else if (maxRole === 'founder' && maxRisk === 'premature') {
+                 insights += `رواد الأعمال الأعزاء، اختياركم للتوسع المبكر كخطر رئيسي يدل على وعي عالٍ. <strong>"النمو قبل الملاءمة هو انتحار مالي."</strong> لا توظفوا فريق مبيعات ضخم ولا تطلقوا حملات إعلانية واسعة قبل أن يثبت العملاء الأوائل (بأموالهم، وليس بكلماتهم) أنهم لا يستطيعون الاستغناء عن منتجكم. التركيز الآن يجب أن يكون على الاحتفاظ بالعملاء (Retention) وليس مجرد الاستحواذ (Acquisition).`;
+            } else if (maxStage === 'growth' && maxRisk === 'micromanagement') {
+                 insights += `أنتم في مرحلة التوسع (Scaling)، والمشكلة الأكبر هي المركزية. هذا هو التحدي الكلاسيكي لانتقال المؤسس إلى مدير تنفيذي. <strong>يجب أن تتوقفوا عن أداء المهام بأنفسكم، وتبدؤوا في بناء الأنظمة.</strong> تفويض الصلاحيات (Delegation) ليس رفاهية بل ضرورة للبقاء. شركتكم لن تتجاوز حجم قدرة المؤسس الفردية إلا إذا تحول إلى "قائد أوركسترا" يوجه كفاءات أفضل منه.`;
+            } else if (maxStage === 'seed' && maxRisk === 'cashflow') {
+                 insights += `في مرحلة التأسيس، <strong>الكاش هو الملك.</strong> نفاد السيولة هو السبب الأول لوفاة الشركات الناشئة. التوصية: راقبوا معدل الحرق (Burn Rate) أسبوعياً. تأجيل أي نفقات غير مرتبطة مباشرة بالتحقق من المنتج (MVP). وإذا لزم الأمر، طبقوا منهجية (Pivot) مبكراً قبل أن يفرغ المدرج المالي (Runway) بالكامل، فالمستثمر لا ينقذ شركة غارقة في الديون.`;
+            } else if (maxRole === 'academic') {
+                insights += `بالنسبة للباحثين والطلاب، الفجوة غالبًا ما تكون بين النظرية الأكاديمية وفوضى السوق. <strong>ريادة الأعمال لا تُتعلم فقط في قاعات المحاضرات.</strong> استخدموا منهجية (Build-Measure-Learn) للنزول إلى الشارع واختبار فرضيات أبحاثكم مع مستخدمين حقيقيين. السوق الحقيقي يعاقب بشدة على النماذج النظرية غير القابلة للتطبيق.`;
+            } else {
+                 insights += `تشير البيانات إلى مزيج معقد من الخلفيات والتحديات. ومع ذلك، هناك إجماع على الحاجة لـ <strong>${tActions[maxAction]}</strong>. نصيحتنا الختامية: لا تدعوا هذه الجلسة تكون مجرد تنظير. غداً صباحاً، خذوا هذا الإطار العملي وابدؤوا باختباره على أصغر مشروع في إدارتكم، وقيسوا النتائج بشفافية. ريادة الأعمال هي فعل مستمر، وليست مجرد خطة عمل مكتوبة.`;
+            }
+            
+            insights += `</div></div>`;
+            contentDiv.innerHTML = insights;
+        }
+
+        document.getElementById('analysis-modal').classList.remove('hidden', 'opacity-0'); 
+        document.getElementById('analysis-modal-content').classList.remove('scale-95'); 
+    }
 </script>
 </body>
 </html>
