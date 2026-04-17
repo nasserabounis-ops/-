@@ -13,6 +13,18 @@
             font-family: 'Tajawal', sans-serif;
             overflow-x: hidden; 
             background-color: #f8fafc;
+            /* منع تحديد النص للحماية */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        /* السماح بالتحديد داخل حقول الإدخال فقط */
+        input, select, textarea {
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+            user-select: text;
         }
         .chart-container {
             position: relative;
@@ -81,7 +93,7 @@
         }
     </style>
 </head>
-<body class="text-slate-800 antialiased">
+<body class="text-slate-800 antialiased" oncontextmenu="return false;" oncopy="return false;" oncut="return false;" onpaste="return false;">
 
 <!-- 🌟 بوابة الدخول (Gateway Screen) 🌟 -->
 <div id="gateway-overlay" class="fixed inset-0 z-50 bg-slate-900/95 flex flex-col items-center justify-center p-6 text-white transition-opacity duration-700">
@@ -109,7 +121,7 @@
     </div>
 </div>
 
-<!-- 🔐 Password Modal for Reset 🔐 -->
+<!-- 🔐 Password Modal for Admin Actions 🔐 -->
 <div id="password-modal" class="fixed inset-0 z-[60] bg-slate-900/80 flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
     <div class="bg-white p-6 rounded-2xl shadow-2xl max-w-sm w-full mx-4 transform scale-95 transition-transform duration-300" id="password-modal-content">
         <h3 class="text-xl font-bold text-slate-800 mb-2 flex items-center gap-2"><span>🔒</span> صلاحية المسؤول</h3>
@@ -152,7 +164,7 @@
         </button>
     </header>
 
-    <nav class="flex overflow-x-auto hide-scroll border-b border-slate-300 mb-8 sticky top-0 bg-slate-50 z-10 pt-2 pb-px">
+    <nav class="flex overflow-x-auto hide-scroll border-b border-slate-300 mb-8 sticky top-0 bg-slate-50 z-10 pt-2 pb-px" id="main-nav">
         <button data-target="intro" class="tab-btn active-tab px-6 py-4 text-lg font-bold text-emerald-700 border-b-4 border-emerald-700 whitespace-nowrap transition-colors">المقدمة</button>
         <button data-target="stages" class="tab-btn px-6 py-4 text-lg font-bold text-slate-500 border-b-4 border-transparent hover:text-slate-800 whitespace-nowrap transition-colors">1. الهيكل والنمو</button>
         <button data-target="funding" class="tab-btn px-6 py-4 text-lg font-bold text-slate-500 border-b-4 border-transparent hover:text-slate-800 whitespace-nowrap transition-colors">2. التمويل والموارد</button>
@@ -474,7 +486,7 @@
                             <strong class="text-slate-900 block mb-2 font-bold text-base">مسح للمشاركة السريعة 📱</strong>
                             <div class="relative">
                                 <span class="absolute right-2 top-2 text-slate-400 text-xs">🔗</span>
-                                <input type="text" id="public-url-input" class="w-full text-xs py-2 pl-2 pr-6 border border-slate-300 rounded text-left focus:ring-2 focus:ring-blue-600 outline-none transition-all bg-white shadow-inner font-sans" dir="ltr" placeholder="رابط المشاركة..." oninput="debounceUpdateQR()">
+                                <input type="text" id="public-url-input" class="w-full text-xs py-2 pl-2 pr-6 border border-slate-300 rounded text-left focus:ring-2 focus:ring-blue-600 outline-none transition-all bg-white shadow-inner font-sans" dir="ltr" placeholder="رابط المشاركة..." readonly>
                             </div>
                         </div>
                     </div>
@@ -625,7 +637,6 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    // قمنا بإضافة addDoc هنا لتمكين الإضافة التراكمية
     import { getFirestore, collection, doc, setDoc, addDoc, onSnapshot, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     const LOCAL_FIREBASE_CONFIG = {
@@ -645,7 +656,7 @@
         
         if (!currentUser) {
             const errBox = document.getElementById('poll-error-msg');
-            errBox.innerText = "غير متصل بالسحابة. تحقق من الإعدادات.";
+            errBox.innerHTML = "غير متصل بالسحابة. تأكد من تفعيل <b>Anonymous Auth</b> في إعدادات Firebase.";
             errBox.classList.remove('hidden');
             return;
         }
@@ -660,14 +671,14 @@
         const actionVal = document.getElementById('poll-action').value;
 
         try {
-            // التعديل هنا: استخدام addDoc بدلاً من setDoc لضمان إضافة السجلات وعدم الكتابة فوقها أبداً
+            // إضافة السجل بشكل تراكمي
             const pollsCollectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'startup_polls');
             await addDoc(pollsCollectionRef, { 
                 role: roleVal,
                 stage: stageVal, 
                 risk: riskVal,
                 action: actionVal,
-                userId: currentUser.uid, // نحتفظ بمعرف المستخدم لغرض التوثيق فقط
+                userId: currentUser.uid,
                 timestamp: Date.now() 
             });
 
@@ -678,8 +689,9 @@
             
             setTimeout(() => {
                 btn.disabled = false;
-                btn.innerHTML = "إرسال تصويت آخر 🔄"; // تم تغيير النص لتوضيح إمكانية التصويت التراكمي
+                btn.innerHTML = "إرسال تصويت آخر 🔄"; 
                 msg.classList.add('hidden');
+                document.getElementById('audiencePollForm').reset(); // تصفير النموذج للسماح بتصويت آخر
             }, 3000);
 
         } catch (error) {
@@ -687,7 +699,7 @@
             btn.disabled = false;
             btn.innerHTML = "إرسال للسحابة 🚀";
             const errBox = document.getElementById('poll-error-msg');
-            errBox.innerText = "حدث خطأ. قد تحتاج صلاحيات Firestore.";
+            errBox.innerText = "حدث خطأ. يرجى التحقق من صلاحيات قاعدة البيانات.";
             errBox.classList.remove('hidden');
         }
     };
@@ -744,7 +756,7 @@
         } catch(e) { 
             console.warn("Firebase Init fallback/Offline mode activated:", e);
             const statusDiv = document.getElementById('cloud-sync-status');
-            statusDiv.innerHTML = "⚠️ وضع عدم الاتصال: يرجى إضافة إعدادات Firebase لعمل المزامنة.";
+            statusDiv.innerHTML = "⚠️ وضع عدم الاتصال: يرجى تفعيل (Anonymous Auth) في Firebase Console.";
             statusDiv.classList.replace('bg-blue-800/50', 'bg-slate-700/80');
             statusDiv.classList.remove('animate-pulse');
             document.getElementById('btn-enter-fs').disabled = false;
@@ -852,21 +864,31 @@
     // --- Navigation ---
     const tabs = document.querySelectorAll('.tab-btn');
     const sections = document.querySelectorAll('.section-content');
+    
+    function switchTab(targetId) {
+        tabs.forEach(t => {
+            t.classList.remove('active-tab', 'text-emerald-700', 'border-emerald-700', 'text-blue-600');
+            t.classList.add('text-slate-500', 'border-transparent');
+            if(t.getAttribute('data-target') === targetId && targetId === 'poll') {
+                t.classList.add('active-tab', 'text-blue-600', 'border-blue-600');
+                t.classList.remove('text-slate-500');
+            } else if (t.getAttribute('data-target') === targetId) {
+                t.classList.add('active-tab', 'text-emerald-700', 'border-emerald-700');
+                t.classList.remove('text-slate-500');
+            }
+        });
+        
+        sections.forEach(sec => { sec.classList.add('hidden'); sec.classList.remove('block'); });
+        const targetSection = document.getElementById(targetId);
+        if(targetSection) {
+            targetSection.classList.remove('hidden');
+            targetSection.classList.add('block');
+        }
+    }
+
     tabs.forEach(tab => {
         tab.addEventListener('click', () => {
-            tabs.forEach(t => {
-                t.classList.remove('active-tab', 'text-emerald-700', 'border-emerald-700', 'text-blue-600');
-                t.classList.add('text-slate-500', 'border-transparent');
-            });
-            tab.classList.add('active-tab', 'text-emerald-700', 'border-emerald-700');
-            tab.classList.remove('text-slate-500', 'border-transparent');
-            if(tab.getAttribute('data-target') === 'poll') {
-                tab.classList.add('text-blue-600');
-            }
-            
-            sections.forEach(sec => { sec.classList.add('hidden'); sec.classList.remove('block'); });
-            document.getElementById(tab.getAttribute('data-target')).classList.remove('hidden');
-            document.getElementById(tab.getAttribute('data-target')).classList.add('block');
+            switchTab(tab.getAttribute('data-target'));
         });
     });
 
@@ -893,7 +915,7 @@
         options: { ...commonOptions, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
     });
 
-    // 2. Stages Timeline Logic (Expanded Explanations - MBA level depth)
+    // 2. Stages Timeline Logic
     const stagesData = [
         { t: "مرحلة التأسيس (Seed)", h: "فريق صغير جداً (المؤسسين فقط). لا توجد بيروقراطية، بل مرونة مطلقة لاتخاذ قرارات سريعة وتغيير المسار يومياً بناءً على ردود أفعال العملاء الأوائل.", m: "تمويل ذاتي (Bootstrapping)، أو مدخرات، أو مستثمرون ملائكيون (Angel Investors). الهدف هو حرق أقل قدر ممكن من النقد لتفادي التخفيف المبكر للحصص.", c: "بناء 'الحد الأدنى من المنتج القابل للتطبيق' (MVP). التحدي الأكبر ليس في البرمجة أو التصنيع، بل في النزول للسوق واختبار الفرضيات لإثبات أن المشكلة التي تحلها موجودة فعلاً، وأن العميل مستعد للدفع مقابل الحل." },
         { t: "مرحلة الانطلاق (Early/Series A)", h: "بداية الهيكلة. يتم توظيف كفاءات متخصصة (مدير مبيعات، مسؤول تسويق). تظهر هنا التحديات الإدارية الأولى حيث يحتاج الفريق لآليات تواصل وتفويض واضحة بدلاً من الإدارة العشوائية.", m: "صناديق رأس المال الجريء (VCs). التمويل يُستخدم لضبط وتحسين 'اقتصاديات الوحدة' (Unit Economics) وإيجاد قناة تسويق مستدامة لا تكلف أكثر من العائد.", c: "الوصول إلى 'ملاءمة المنتج للسوق' (Product-Market Fit). العلامة الأكيدة لذلك هي أن المنتج يُسحب من قبل السوق بسرعة تفوق قدرتك على تلبية الطلب، مع معدلات احتفاظ عالية (High Retention)." },
@@ -945,7 +967,7 @@
         options: { ...commonOptions, scales: { r: { ticks: { display: false }, grid: { color: 'rgba(255,255,255,0.1)' }, pointLabels: { color: '#e2e8f0', font: {size: 11} } } }, plugins: { legend: { position: 'bottom', labels: { color: '#fff' } } } }
     });
 
-    // 5. Risks & Accordion (Deep Strategic Mitigation Strategies)
+    // 5. Risks Chart
     new Chart(document.getElementById('riskBubbleChart').getContext('2d'), {
         type: 'bubble',
         data: {
@@ -973,31 +995,39 @@
         accRisk.innerHTML += `<div class="border border-slate-200 rounded-xl bg-slate-50 overflow-hidden"><button class="w-full px-5 py-4 text-right flex justify-between items-center font-bold text-slate-800 bg-slate-100 hover:bg-slate-200 transition-colors" onclick="document.getElementById('r-content-${idx}').classList.toggle('hidden')"><span class="flex items-center gap-2 text-base md:text-lg">⚠️ ${item.r}</span><span class="text-slate-400 text-sm whitespace-nowrap mr-2">تفاصيل ▼</span></button><div id="r-content-${idx}" class="hidden px-6 py-5 border-t border-slate-200 text-sm md:text-base text-slate-700 bg-white leading-relaxed"><strong class="text-slate-800 bg-slate-100 px-2 py-1 rounded inline-block mb-2">✅ استراتيجية التخفيف والحل:</strong><br><span class="block">${item.m}</span></div></div>`;
     });
 
-    // --- Poll & QR Fix ---
+    // --- Poll & QR Linking directly to Poll section ---
     let qrTimeout;
-    window.debounceUpdateQR = () => { clearTimeout(qrTimeout); qrTimeout = setTimeout(window.updateQRCode, 500); };
     window.updateQRCode = () => {
         let url = document.getElementById('public-url-input').value.trim();
-        // Fallback in case the user deletes the text entirely
-        if(!url) url = "https://example.com/your-app"; 
-        
         document.getElementById("qrcode").innerHTML = "";
-        try {
-            new QRCode(document.getElementById("qrcode"), { text: url, width: 120, height: 120, colorDark: "#0f172a", colorLight: "#ffffff" });
-        } catch(e) {
-            console.error("QR Code Error:", e);
+        if(url) {
+            try {
+                new QRCode(document.getElementById("qrcode"), { text: url, width: 120, height: 120, colorDark: "#0f172a", colorLight: "#ffffff" });
+            } catch(e) {
+                console.error("QR Code Error:", e);
+            }
         }
     };
+    
+    // إعداد الرابط الأولي والـ QR Code ليوجه مباشرة للاستطلاع
     setTimeout(() => { 
-        let initialUrl = window.location.href;
+        let initialUrl = window.location.href.split('#')[0];
         
-        // إصلاح لمشكلة الروابط الطويلة أو المؤقتة (Blob URLs) التي تمنع الـ QR من العمل بشكل صحيح
+        // إصلاح لمشكلة الروابط الطويلة للـ blob التي لا يمكن قراءتها بسهولة
         if(initialUrl.startsWith('blob:') || initialUrl.includes('usercontent.goog')) {
-            initialUrl = "https://your-github-username.github.io/repo-name/"; 
+            initialUrl = "https://entrepreneurship.vercel.app/"; // ضع الرابط الحقيقي لموقعك هنا
         }
         
+        // إضافة هاش الاستطلاع للرابط بحيث عند فتحه يذهب للاستطلاع مباشرة
+        initialUrl += "#poll";
         document.getElementById('public-url-input').value = initialUrl; 
         window.updateQRCode(); 
+        
+        // إذا قام شخص بفتح الرابط وبه #poll يفتح شريط الاستطلاع مباشرة
+        if(window.location.hash === '#poll') {
+            switchTab('poll');
+            window.enterExperience(false); // تخطي شاشة الترحيب
+        }
     }, 500);
 
     const chartRole = new Chart(document.getElementById('pollRoleChart').getContext('2d'), {
@@ -1085,7 +1115,10 @@
         const pwdError = document.getElementById('pwd-error');
         const loader = document.getElementById('admin-loader');
 
-        if(pwdInput.value === 'admin2026') { 
+        // التشفير والحماية: كلمة المرور admin2026 مخفية داخل الكود باستخدام تسلسل الأحرف (Char Codes)
+        const expected = String.fromCharCode(97, 100, 109, 105, 110, 50, 48, 50, 54);
+        
+        if(pwdInput.value === expected) { 
             pwdError.classList.add('hidden');
             loader.classList.remove('hidden');
 
